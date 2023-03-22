@@ -1,18 +1,20 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 
 //component
-import Home from "./pages/Home/Home";
-import Navbar from "./components/Navbar";
-import MainMenu from "./components/HomeMenu/HomeMenu";
-import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Layout from "./components/Layout";
+import DockerList from "./pages/DockerList";
 
 function App() {
   return (
     <div>
-      <Navbar />
-      <Home />
-      <MainMenu />
-      <Footer />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dockerList" element={<DockerList />} />
+        </Routes>
+      </Layout>
     </div>
   );
 }
