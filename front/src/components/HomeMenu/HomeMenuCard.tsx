@@ -1,11 +1,16 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const HomeMenuCard = () => {
-  const onClickHandler = useCallback(() => {}, []);
+  const navigate = useNavigate();
+  const onClickHandler = useCallback(() => {
+    navigate(`/dockerList`);
+  }, []);
+
   return (
-    <Container>
-      <Title onClick={onClickHandler}>DockerList</Title>
+    <Container onClick={onClickHandler}>
+      <Title>DockerList</Title>
     </Container>
   );
 };
@@ -17,6 +22,7 @@ const Container = styled.div`
   height: 200px;
   border: 1px solid black;
   border-radius: 10px;
+  cursor: pointer;
 `;
 
 const Title = styled.h1`
