@@ -4,6 +4,12 @@ import styled from "styled-components";
 //components
 import HomeMenuCard from "./HomeMenuCard";
 
+enum MainMenu {
+  fastStart = "fastStart",
+  dockerList = "dockerList",
+  springIo = "springIo",
+}
+
 const HomeMenu = () => {
   return (
     <Container>
