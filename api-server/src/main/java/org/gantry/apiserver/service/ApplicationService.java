@@ -29,21 +29,27 @@ public class ApplicationService {
     public ContainerInfo execute(Long applicationId) {
         var application = this.findById(applicationId)
                 .orElseThrow(() -> new NoSuchApplicationException());
-        long containerId = docker.run(application);
+        String containerId = docker.run(application);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo stop(Long containerId) {
+    public ContainerInfo stop(String containerId) {
         docker.stop(containerId);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo remove(Long containerId) {
+    public ContainerInfo remove(String containerId) {
         docker.remove(containerId);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo getStatus(Long containerId) {
+    public ContainerInfo getStatus(String containerId) {
         return docker.getStatus(containerId);
     }
+
+    public ContainerInfo restart(String containerId) {
+        docker.restart(containerId);
+        return docker.getStatus(containerId);
+    }
+
 }

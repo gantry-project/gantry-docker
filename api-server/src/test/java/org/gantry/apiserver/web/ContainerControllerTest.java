@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,10 +29,10 @@ class ContainerControllerTest {
 
     @Test
     void stop() throws Exception {
-        var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.PAUSED).build();
-        given(service.stop(anyLong())).willReturn(dto);
+        var dto = ContainerInfo.builder().id("9999").applicationId(1L).status(ContainerStatus.PAUSED).build();
+        given(service.stop("9999")).willReturn(dto);
 
-        mockMvc.perform(post("/containers/1/stop"))
+        mockMvc.perform(post("/containers/9999/stop"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
@@ -42,10 +41,10 @@ class ContainerControllerTest {
 
     @Test
     void remove() throws Exception {
-        var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.REMOVING).build();
-        given(service.remove(anyLong())).willReturn(dto);
+        var dto = ContainerInfo.builder().id("9999").applicationId(1L).status(ContainerStatus.REMOVING).build();
+        given(service.remove("9999")).willReturn(dto);
 
-        mockMvc.perform(post("/containers/1/remove"))
+        mockMvc.perform(post("/containers/9999/remove"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
@@ -54,14 +53,26 @@ class ContainerControllerTest {
 
     @Test
     void getStatus() throws Exception {
-        var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.RUNNING).build();
-        given(service.getStatus(anyLong())).willReturn(dto);
+        var dto = ContainerInfo.builder().id("9999").applicationId(1L).status(ContainerStatus.RUNNING).build();
+        given(service.getStatus("9999")).willReturn(dto);
 
-        mockMvc.perform(get("/containers/1/status"))
+        mockMvc.perform(get("/containers/9999/status"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
                 .andExpect(jsonPath("status").value("RUNNING"));
+    }
+
+    @Test
+    void restart() throws Exception {
+        ContainerInfo dto = ContainerInfo.builder().id("9999").applicationId(99L).status(ContainerStatus.RESTARTING).build();
+        given(service.restart("9999")).willReturn(dto);
+
+        mockMvc.perform(post("/containers/9999/restart"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").value("9999"))
+                .andExpect(jsonPath("status").value("RESTARTING"));
     }
 
 }

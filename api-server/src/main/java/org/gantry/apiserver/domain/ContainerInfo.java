@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class ContainerInfo {
-    private long id;
+    private String id;
     private long applicationId;
     private ContainerStatus status;
 }
