@@ -8,7 +8,7 @@ import org.gantry.apiserver.domain.ContainerInfo;
 @Builder
 @Data
 public class ContainerDto {
-    private long id;
+    private String id;
     private long applicationId;
     private ContainerStatus status;
 

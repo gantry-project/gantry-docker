@@ -56,7 +56,7 @@ class ApplicationControllerTest {
 
     @Test
     void execute() throws Exception {
-        var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.CREATED).build();
+        var dto = ContainerInfo.builder().id("1234").applicationId(1L).status(ContainerStatus.CREATED).build();
         given(service.execute(anyLong())).willReturn(dto);
 
         mockMvc.perform(post("/applications/1/execute"))
