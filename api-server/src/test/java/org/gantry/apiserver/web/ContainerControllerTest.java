@@ -33,7 +33,7 @@ class ContainerControllerTest {
         var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.PAUSED).build();
         given(service.stop(anyLong())).willReturn(dto);
 
-        mockMvc.perform(post("/containers/1/stop"))
+        mockMvc.perform(post("/containers/9999/stop"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
@@ -45,7 +45,7 @@ class ContainerControllerTest {
         var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.REMOVING).build();
         given(service.remove(anyLong())).willReturn(dto);
 
-        mockMvc.perform(post("/containers/1/remove"))
+        mockMvc.perform(post("/containers/9999/remove"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
@@ -57,11 +57,23 @@ class ContainerControllerTest {
         var dto = ContainerInfo.builder().id(9999L).applicationId(1L).status(ContainerStatus.RUNNING).build();
         given(service.getStatus(anyLong())).willReturn(dto);
 
-        mockMvc.perform(get("/containers/1/status"))
+        mockMvc.perform(get("/containers/9999/status"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("9999"))
                 .andExpect(jsonPath("status").value("RUNNING"));
+    }
+
+    @Test
+    void restart() throws Exception {
+        ContainerInfo dto = ContainerInfo.builder().id(1L).applicationId(99L).status(ContainerStatus.RESTARTING).build();
+        given(service.restart(anyLong())).willReturn(dto);
+
+        mockMvc.perform(post("/containers/1/restart"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").value("1"))
+                .andExpect(jsonPath("status").value("RESTARTING"));
     }
 
 }

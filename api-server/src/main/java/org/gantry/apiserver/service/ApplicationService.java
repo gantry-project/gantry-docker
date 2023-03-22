@@ -46,4 +46,10 @@ public class ApplicationService {
     public ContainerInfo getStatus(Long containerId) {
         return docker.getStatus(containerId);
     }
+
+    public ContainerInfo restart(Long containerId) {
+        docker.restart(containerId);
+        return docker.getStatus(containerId);
+    }
+
 }

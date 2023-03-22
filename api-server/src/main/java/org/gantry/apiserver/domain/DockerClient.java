@@ -18,4 +18,8 @@ public class DockerClient {
     public ContainerInfo getStatus(long containerId) {
         return null;
     }
+
+    public ContainerInfo restart(Long containerId) {
+        return null;
+    }
 }
