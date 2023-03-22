@@ -2,12 +2,16 @@ import React from "react";
 import styled from "styled-components";
 
 //component
+import MainMenu from "../components/HomeMenu/HomeMenu";
 
 const Home = () => {
   return (
-    <Container>
-      <Title>GANTRY</Title>
-    </Container>
+    <>
+      <Container>
+        <Title>GANTRY</Title>
+      </Container>
+      <MainMenu />
+    </>
   );
 };
 
