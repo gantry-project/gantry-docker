@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+  const onClickHandler = useCallback(() => {
+    navigate(`/`);
+  }, []);
   return (
     <Container>
       <Wrapper>
-        <Logo>GANTRY-DOCKER</Logo>
+        <Logo onClick={onClickHandler}>GANTRY-DOCKER</Logo>
         <MainItem>
           <Item>WHY GRANTRY</Item>
           <Item>PRODUCTS</Item>
@@ -39,6 +45,7 @@ const Wrapper = styled.div`
 `;
 const Logo = styled.div`
   width: 25%;
+  cursor: pointer;
 `;
 
 const MainItem = styled.div`

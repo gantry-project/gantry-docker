@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import DockerList from "./pages/DockerList";
+import UserCart from "./pages/UserCart";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dockerList" element={<DockerList />} />
+          <Route path="/userAppCart" element={<UserCart />} />
         </Routes>
       </Layout>
     </div>
