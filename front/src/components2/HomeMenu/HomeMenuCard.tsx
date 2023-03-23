@@ -24,6 +24,7 @@ const Container = styled.div`
   border-radius: 10px;
   cursor: pointer;
 `;
+
 const Title = styled.h1`
   font-size: 50px;
 `;
