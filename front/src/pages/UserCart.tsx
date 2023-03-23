@@ -1,29 +1,28 @@
 import React from "react";
 import styled from "styled-components";
-
-//component
-import DockerListHeader from "../components/DockerList/DockerListHeader";
-import DockerCat from "../components/DockerList/DockerCat";
 import { dummyData } from "../dummyData";
 
-const DockerList = () => {
+//components
+import DockerCat from "../components/DockerList/DockerCat";
+
+const UserCart = () => {
   return (
     <Container>
-      <DockerListHeader />
       <Wrapper>
-        <DockerCat state={true} datas={dummyData} />
+        <DockerCat state={false} datas={dummyData} />
       </Wrapper>
     </Container>
   );
 };
 
-export default DockerList;
+export default UserCart;
 
 const Container = styled.div`
-  height: 100vh;
   background-color: whitesmoke;
-  padding: 10px;
+  width: 100%;
+  height: 100vh;
 `;
+
 const Wrapper = styled.div`
   padding: 50px;
 `;

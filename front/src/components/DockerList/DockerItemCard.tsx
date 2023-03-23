@@ -6,7 +6,14 @@ interface Props {
 }
 
 const DockerItemCard: FC<Props> = ({ items }) => {
-  return <>hi</>;
+  console.log("items", items);
+  return (
+    <>
+      {items.map((item, key) => {
+        <Container key={key}>{item} hi</Container>;
+      })}
+    </>
+  );
 };
 
 export default DockerItemCard;
