@@ -1,17 +1,26 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+//style
+import Badge from "@mui/material/Badge";
+import { FaCartPlus } from "react-icons/fa";
+
 const Navbar = () => {
+  const [loginstate, setLoginState] = useState(true);
   const navigate = useNavigate();
 
-  const onClickHandler = useCallback(() => {
+  const onClickHandlerHome = useCallback(() => {
     navigate(`/`);
+  }, []);
+
+  const onClickHandlerCart = useCallback(() => {
+    navigate(`/userAppCart`);
   }, []);
   return (
     <Container>
       <Wrapper>
-        <Logo onClick={onClickHandler}>GANTRY-DOCKER</Logo>
+        <Logo onClick={onClickHandlerHome}>GANTRY-DOCKER</Logo>
         <MainItem>
           <Item>WHY GRANTRY</Item>
           <Item>PRODUCTS</Item>
@@ -20,7 +29,19 @@ const Navbar = () => {
           <Item>COMMUNITY </Item>
         </MainItem>
         <RegisterContainer>
-          <LoginButton>LOGIN</LoginButton>
+          {loginstate ? (
+            <UserProfileWrapper>
+              <UserProfile>hello oo님</UserProfile>
+              <Badge badgeContent={4} color="primary">
+                <UserCart onClick={onClickHandlerCart}>
+                  <FaCartPlus />
+                </UserCart>
+              </Badge>
+              <UserCart></UserCart>
+            </UserProfileWrapper>
+          ) : (
+            <LoginButton>LOGIN</LoginButton>
+          )}
         </RegisterContainer>
       </Wrapper>
     </Container>
@@ -58,6 +79,8 @@ const Item = styled.div`
 `;
 const RegisterContainer = styled.div`
   width: 20%;
+  display: flex;
+  justify-content: center;
 `;
 const LoginButton = styled.button`
   border: 0;
@@ -65,4 +88,23 @@ const LoginButton = styled.button`
   height: 40px;
   border-radius: 10px;
   font-size: 15px;
+`;
+const UserProfile = styled.button`
+  border: 0;
+  width: 100px;
+  height: 40px;
+`;
+const UserProfileWrapper = styled.div`
+  border: 0;
+  width: 70%;
+
+  height: 100%;
+  display: flex;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+`;
+const UserCart = styled.div`
+  margin: 10px;
+  cursor: pointer;
 `;
