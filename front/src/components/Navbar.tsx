@@ -17,6 +17,7 @@ const Navbar = () => {
   const onClickHandlerCart = useCallback(() => {
     navigate(`/userAppCart`);
   }, []);
+  // logo 부분에 사이드바 클릭 버튼
   return (
     <Container>
       <Wrapper>
