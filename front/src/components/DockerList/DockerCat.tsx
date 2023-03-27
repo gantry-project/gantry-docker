@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 //compoments
 import DockerItemCard from "./DockerItemCard";

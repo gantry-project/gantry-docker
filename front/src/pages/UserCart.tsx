@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { dummyData } from "../dummyData";
 import { useNavigate } from "react-router-dom";
 
