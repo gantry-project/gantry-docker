@@ -11,10 +11,14 @@ import lombok.*;
 public class Application extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "application_id")
     private long id;
 
     @Column(nullable = false)
     private String title;
+
+    @OneToOne(mappedBy = "application")
+    private Container container;
 
     @Column(nullable = false)
     private String image;
@@ -23,9 +27,10 @@ public class Application extends BaseTimeEntity {
     private PlatformType platformType;
 
     @Builder
-    public Application(long id, String title, String image) {
+    public Application(long id, String title, Container container, String image) {
         this.id = id;
         this.title = title;
         this.image = image;
+        this.container = container;
     }
 }

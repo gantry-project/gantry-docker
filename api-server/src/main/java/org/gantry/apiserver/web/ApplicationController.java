@@ -31,8 +31,6 @@ public class ApplicationController {
 
     @PostMapping("/{applicationId}/execute")
     public ContainerDto execute(@PathVariable Long applicationId) {
-        var container = service.execute(applicationId);
-        var response = ContainerDto.from(container);
-        return response;
+        return ContainerDto.from(service.execute(applicationId));
     }
 }
