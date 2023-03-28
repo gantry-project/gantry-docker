@@ -2,12 +2,12 @@ package org.gantry.apiserver.service;
 
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Application;
-import org.gantry.apiserver.domain.DockerClient;
-import org.gantry.apiserver.domain.ContainerInfo;
+import org.gantry.apiserver.domain.DockerClientConnect;
+import org.gantry.apiserver.domain.Container;
 import org.gantry.apiserver.persistence.ApplicationRepository;
 import org.gantry.apiserver.exception.NoSuchApplicationException;
+import org.gantry.apiserver.web.dto.ContainerDto;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class ApplicationService {
     private final ApplicationRepository repository;
 
-    private final DockerClient docker;
+    private final DockerClientConnect docker;
 
     public List<Application> findAll() {
         return repository.findAll();
@@ -26,24 +26,24 @@ public class ApplicationService {
         return repository.findById(applicationId);
     }
 
-    public ContainerInfo execute(Long applicationId) {
+    public Container execute(Long applicationId) {
         var application = this.findById(applicationId)
                 .orElseThrow(() -> new NoSuchApplicationException());
-        long containerId = docker.run(application);
+        String containerId = docker.run(application);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo stop(Long containerId) {
+    public Container stop(String containerId) {
         docker.stop(containerId);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo remove(Long containerId) {
+    public Container remove(String containerId) {
         docker.remove(containerId);
         return docker.getStatus(containerId);
     }
 
-    public ContainerInfo getStatus(Long containerId) {
+    public Container getStatus(String containerId) {
         return docker.getStatus(containerId);
     }
 }

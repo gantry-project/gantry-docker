@@ -1,7 +1,7 @@
 package org.gantry.apiserver.service;
 
 import org.gantry.apiserver.domain.Application;
-import org.gantry.apiserver.domain.DockerClient;
+import org.gantry.apiserver.domain.DockerClientConnect;
 import org.gantry.apiserver.persistence.ApplicationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class ApplicationServiceTest {
     private ApplicationRepository repository;
 
     @Mock
-    private DockerClient docker;
+    private DockerClientConnect docker;
 
     private ApplicationService service;
 
