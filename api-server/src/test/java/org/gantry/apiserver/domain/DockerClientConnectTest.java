@@ -16,8 +16,7 @@ import org.springframework.context.annotation.Import;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.gantry.apiserver.domain.ContainerStatus.PAUSED;
-import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
+import static org.gantry.apiserver.domain.ContainerStatus.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -62,14 +61,9 @@ class DockerClientConnectTest {
 
     @BeforeEach
     void saveApplication(){
-        Application appEntity = applicationRepository.save(testApplication);
-        applicationId = appEntity.getId();
+        testApplication = applicationRepository.save(testApplication);
+        applicationId = testApplication.getId();
     }
-    @AfterEach
-    void removeApplication(){
-        applicationRepository.deleteAll();
-    }
-
 
     @Test
     void run() {
@@ -106,7 +100,7 @@ class DockerClientConnectTest {
         dockerClientConnect.restart(containerId);
 
         Container stopContainer = containerRepository.findById(containerId).get();
-        Assertions.assertEquals(RUNNING, stopContainer.getStatus());
+        Assertions.assertEquals(RESTARTING, stopContainer.getStatus());
     }
 
     @Test

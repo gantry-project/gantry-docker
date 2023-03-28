@@ -50,4 +50,10 @@ public class ApplicationService {
     public Container getStatus(String containerId) {
         return docker.getStatus(containerId);
     }
+
+    @Transactional
+    public Container restart(String containerId) {
+        docker.restart(containerId);
+        return docker.getStatus(containerId);
+    }
 }

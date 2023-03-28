@@ -25,6 +25,12 @@ public class ContainerController {
         return ContainerDto.from(container);
     }
 
+    @PostMapping("/{containerId}/restart")
+    public ContainerDto restart(@PathVariable String containerId) {
+        Container container = service.restart(containerId);
+        return ContainerDto.from(container);
+    }
+
     @PostMapping("/{containerId}/remove")
     public ContainerDto remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
