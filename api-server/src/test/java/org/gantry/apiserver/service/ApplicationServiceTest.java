@@ -39,12 +39,4 @@ class ApplicationServiceTest {
         List<Application> list = service.findAll();
         assertThat(list.get(0).getTitle()).isEqualTo("test");
     }
-
-    @Test
-    void restart() {
-        String containerId = "test001";
-        given(docker.getStatus(containerId)).willReturn(Container.builder().status(RESTARTING).build());
-        Container container = service.restart(containerId);
-        assertThat(container.getStatus()).isEqualTo(RESTARTING);
-    }
 }

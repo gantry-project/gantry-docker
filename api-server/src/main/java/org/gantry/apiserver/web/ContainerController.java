@@ -2,16 +2,25 @@ package org.gantry.apiserver.web;
 
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Container;
-import org.gantry.apiserver.service.ApplicationService;
+import org.gantry.apiserver.service.ContainerService;
 import org.gantry.apiserver.web.dto.ContainerDto;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/containers")
 @RestController
 public class ContainerController {
 
-    private final ApplicationService service;
+    private final ContainerService service;
+
+    @GetMapping
+    public List<ContainerDto> runningContainers() {
+        return service.findRunningContainers().stream()
+                .map(ContainerDto::from)
+                .toList();
+    }
 
     @GetMapping("/{containerId}/status")
     public ContainerDto status(@PathVariable String containerId) {
