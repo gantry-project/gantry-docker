@@ -9,6 +9,8 @@ import org.gantry.apiserver.persistence.ContainerRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.gantry.apiserver.domain.ContainerStatus.*;
 
 @Component
@@ -65,6 +67,18 @@ public class DockerClientConnect {
 
     public Container getStatus(String containerId) {
         return findContainerId(containerId);
+    }
+
+    public List<Container> containerList() {
+        return dockerClient.listContainersCmd().exec().stream().map(c -> {
+            Container container = Container.builder()
+                                        .id(c.getId())
+                                        .status(ContainerStatus.of(c.getState()))
+                                        .build();
+            Application application = findContainerId(c.getId()).getApplication();
+            container.setApplication(application);
+            return container;
+        }).toList();
     }
 
 }

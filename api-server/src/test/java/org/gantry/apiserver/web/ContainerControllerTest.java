@@ -2,8 +2,7 @@ package org.gantry.apiserver.web;
 
 import org.gantry.apiserver.domain.Application;
 import org.gantry.apiserver.domain.Container;
-import org.gantry.apiserver.service.ApplicationService;
-import org.junit.jupiter.api.BeforeAll;
+import org.gantry.apiserver.service.ContainerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +12,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.gantry.apiserver.domain.ContainerStatus.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,12 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ContainerController.class)
 class ContainerControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private ApplicationService service;
+    private ContainerService service;
 
     private Application testApplication;
     private Container testContainer;
@@ -95,6 +95,16 @@ class ContainerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("testid0001"))
                 .andExpect(jsonPath("status").value("RUNNING"));
+    }
+
+    @Test
+    void list() throws Exception {
+        given(service.findRunningContainers()).willReturn(List.of(testContainer, testContainer));
+
+        mockMvc.perform(get("/containers"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(2));
     }
 
 }
