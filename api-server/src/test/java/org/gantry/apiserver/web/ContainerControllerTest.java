@@ -61,6 +61,19 @@ class ContainerControllerTest {
                 .andExpect(jsonPath("status").value("PAUSED"));
     }
 
+
+    @Test
+    void restart() throws Exception {
+        testContainer.setStatus(RESTARTING);
+        given(service.restart(anyString())).willReturn(testContainer);
+
+        mockMvc.perform(post("/containers/testid0001/restart"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").value("testid0001"))
+                .andExpect(jsonPath("status").value("RESTARTING"));
+    }
+
     @Test
     void remove() throws Exception {
         testContainer.setStatus(REMOVING);

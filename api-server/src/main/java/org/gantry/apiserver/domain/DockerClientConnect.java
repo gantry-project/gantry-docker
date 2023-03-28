@@ -59,7 +59,7 @@ public class DockerClientConnect {
     public String restart(String containerId) {
         Container container = findContainerId(containerId);
         dockerClient.restartContainerCmd(container.getId()).exec();
-        changeStatus(container, RUNNING);
+        changeStatus(container, RESTARTING);
         return containerId;
     }
 
