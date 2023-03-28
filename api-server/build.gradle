@@ -30,6 +30,7 @@ dependencies {
 	implementation 'com.github.docker-java:docker-java:3.3.0'
 	implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.0'
 	testImplementation "org.testcontainers:testcontainers:1.17.6"
+	testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
 }
 
