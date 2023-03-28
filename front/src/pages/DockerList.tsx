@@ -20,10 +20,15 @@ const DockerList = () => {
 export default DockerList;
 
 const Container = styled.div`
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   background-color: whitesmoke;
   padding: 10px;
 `;
 const Wrapper = styled.div`
   padding: 50px;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
 `;
