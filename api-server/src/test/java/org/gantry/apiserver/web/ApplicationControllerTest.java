@@ -2,8 +2,8 @@ package org.gantry.apiserver.web;
 
 import org.gantry.apiserver.domain.Application;
 import org.gantry.apiserver.domain.Container;
-import org.gantry.apiserver.domain.ContainerStatus;
 import org.gantry.apiserver.service.ApplicationService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -32,9 +31,16 @@ class ApplicationControllerTest {
     @MockBean
     private ApplicationService service;
 
+    private static Application testApplication;
+
+    @BeforeAll
+    static void createFixtures() {
+        testApplication = Application.builder().title("test").image("repo/repo:latest").container(new Container()).build();
+    }
+
     @Test
     void list() throws Exception {
-        given(service.findAll()).willReturn(List.of(Application.builder().title("test").image("repo/repo:latest").build()));
+        given(service.findAll()).willReturn(List.of(testApplication));
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
@@ -44,8 +50,7 @@ class ApplicationControllerTest {
 
     @Test
     void getOne() throws Exception {
-        var dto = Application.builder().id(1L).title("test").image("repo/repo:latest").build();
-        given(service.findById(anyLong())).willReturn(Optional.of(dto));
+        given(service.findById(anyLong())).willReturn(Optional.of(testApplication));
 
         mockMvc.perform(get("/applications/1"))
                 .andExpect(status().isOk())
