@@ -47,7 +47,7 @@ class DockerClientConnectTest {
     @BeforeAll
     static void createFixture() {
         testContainer = Container.builder()
-                .id("testid0001")
+                .id("test0001")
                 .status(RUNNING)
                 .build();
         testApplication = Application.builder()
@@ -68,7 +68,7 @@ class DockerClientConnectTest {
     @Test
     void run() {
         CreateContainerCmd createCmd = mock(CreateContainerCmd.class);
-        given(createCmd.exec()).willReturn(new CreateContainerResponse() {{setId("testid");}});
+        given(createCmd.exec()).willReturn(new CreateContainerResponse() {{setId("test001");}});
         given(client.createContainerCmd(anyString())).willReturn(createCmd);
         given(client.startContainerCmd(anyString())).willReturn(mock(StartContainerCmd.class));
 
@@ -111,11 +111,10 @@ class DockerClientConnectTest {
         String containerId = restartApp.getContainer().getId();
         dockerClientConnect.remove(containerId);
 
-        assertThatThrownBy(() -> {
-            containerRepository
-                    .findById(containerId)
-                    .orElseThrow(NoSuchElementException::new);
-        }).isInstanceOf(NoSuchElementException.class);
+        assertThatThrownBy(() -> containerRepository
+                .findById(containerId)
+                .orElseThrow(NoSuchElementException::new)
+        ).isInstanceOf(NoSuchElementException.class);
     }
 
 }

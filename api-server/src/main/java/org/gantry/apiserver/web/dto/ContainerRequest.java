@@ -9,13 +9,13 @@ import org.gantry.apiserver.domain.Container;
 @Builder
 @Data
 @ToString
-public class ContainerDto {
+public class ContainerRequest {
     private String id;
     private long applicationId;
     private ContainerStatus status;
 
-    public static ContainerDto from(Container container) {
-        return ContainerDto.builder()
+    public static ContainerRequest from(Container container) {
+        return ContainerRequest.builder()
                 .id(container.getId())
                 .applicationId(container.getApplication().getId())
                 .status(container.getStatus())

@@ -2,9 +2,9 @@ package org.gantry.apiserver.domain;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.gantry.apiserver.exception.NoSuchContainerException;
 import org.gantry.apiserver.persistence.ContainerRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +44,10 @@ public class DockerClientConnect {
     }
 
     private Container findContainerId(String containerId) {
-        return containerRepository.findById(containerId).orElseThrow(NotFoundException::new);
+        return containerRepository.findById(containerId).orElseThrow(NoSuchContainerException.with(containerId));
     }
     private void changeStatus(Container container, ContainerStatus status){
-        container.setStatus(status);// 엔티티의 setter는 추후 변경
+        container.setStatus(status);// 엔티티의 setter 는 추후 변경
     }
     @Transactional
     public void remove(String containerId) {

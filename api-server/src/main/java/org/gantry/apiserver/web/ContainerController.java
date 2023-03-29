@@ -1,9 +1,12 @@
 package org.gantry.apiserver.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Container;
 import org.gantry.apiserver.service.ContainerService;
-import org.gantry.apiserver.web.dto.ContainerDto;
+import org.gantry.apiserver.web.dto.ContainerRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,34 +18,63 @@ public class ContainerController {
 
     private final ContainerService service;
 
+    @Operation(summary = "List containers from Docker")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found containers"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
     @GetMapping
-    public List<ContainerDto> runningContainers() {
+    public List<ContainerRequest> listRunningContainers() {
         return service.findRunningContainers().stream()
-                .map(ContainerDto::from)
+                .map(ContainerRequest::from)
                 .toList();
     }
 
-    @GetMapping("/{containerId}/status")
-    public ContainerDto status(@PathVariable String containerId) {
-        Container container = service.getStatus(containerId);
-        return ContainerDto.from(container);
+    @Operation(summary = "Get information and state of a container")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found container information"),
+            @ApiResponse(responseCode = "404", description = "Not Found a container"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
+    @GetMapping("/{containerId}")
+    public ContainerRequest get(@PathVariable String containerId) {
+        Container container = service.findById(containerId);
+        return ContainerRequest.from(container);
     }
 
-    @PostMapping("/{containerId}/stop")
-    public ContainerDto stop(@PathVariable String containerId) {
-        Container container = service.stop(containerId);
-        return ContainerDto.from(container);
-    }
-
+    @Operation(summary = "Restart a container")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Restarting a container"),
+            @ApiResponse(responseCode = "404", description = "Not Found the container"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
     @PostMapping("/{containerId}/restart")
-    public ContainerDto restart(@PathVariable String containerId) {
+    public ContainerRequest restart(@PathVariable String containerId) {
         Container container = service.restart(containerId);
-        return ContainerDto.from(container);
+        return ContainerRequest.from(container);
     }
 
+    @Operation(summary = "Stop a container")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Stopping a container"),
+            @ApiResponse(responseCode = "404", description = "Not Found the container"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
+    @PostMapping("/{containerId}/stop")
+    public ContainerRequest stop(@PathVariable String containerId) {
+        Container container = service.stop(containerId);
+        return ContainerRequest.from(container);
+    }
+
+    @Operation(summary = "Remove a container")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Removing a container"),
+            @ApiResponse(responseCode = "404", description = "Not Found the container"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
     @PostMapping("/{containerId}/remove")
-    public ContainerDto remove(@PathVariable String containerId) {
+    public ContainerRequest remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
-        return ContainerDto.from(container);
+        return ContainerRequest.from(container);
     }
 }
