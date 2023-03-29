@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import axios from "axios";
 
 //compoments
 interface Containers {
@@ -28,9 +29,15 @@ const DockerCat: FC<Props> = ({ datas, state }) => {
   const [containers, setContainers] = useState<Containers>();
   /**유저가 고른 데이터 */
   useEffect(() => {
-    setContainers({ datas });
-    console.log(containers);
-  }, [datas]);
+    const getContainers = async () => {
+      try {
+        const res = await axios.get("");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getContainers();
+  }, []);
 
   const onClickHandler = useCallback((title: string, item: string) => {
     console.log("title", title);
