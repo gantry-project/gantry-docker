@@ -11,12 +11,14 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   return (
-    <>
+    <Container>
       <Navbar />
       {children}
       <Footer />
-    </>
+    </Container>
   );
 };
 
 export default Layout;
+
+const Container = styled.div``;

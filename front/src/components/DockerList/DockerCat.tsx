@@ -27,11 +27,13 @@ interface Props {
 const DockerCat: FC<Props> = ({ datas, state }) => {
   const [isHovered, setIsHovered] = useState(state);
   const [containers, setContainers] = useState<Containers>();
+
   /**유저가 고른 데이터 */
   useEffect(() => {
     const getContainers = async () => {
       try {
-        const res = await axios.get("");
+        const res = await axios.get("http://localhost:8080/applications");
+        console.log("res", res); // 값이 없음
       } catch (err) {
         console.error(err);
       }

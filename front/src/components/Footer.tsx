@@ -38,6 +38,7 @@ const Footer = () => {
 
 export default Footer;
 const Container = styled.div`
+  width: 100%;
   display: flex;
 `;
 
