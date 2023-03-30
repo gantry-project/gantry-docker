@@ -22,6 +22,16 @@ public class ContainerService {
         return repository.findByStatus(RUNNING);
     }
 
+    public Container findById(String containerId) {
+        return docker.getStatus(containerId);
+    }
+
+    @Transactional
+    public Container restart(String containerId) {
+        docker.restart(containerId);
+        return docker.getStatus(containerId);
+    }
+
     @Transactional
     public Container stop(String containerId) {
         docker.stop(containerId);
@@ -31,16 +41,6 @@ public class ContainerService {
     @Transactional
     public Container remove(String containerId) {
         docker.remove(containerId);
-        return docker.getStatus(containerId);
-    }
-
-    public Container getStatus(String containerId) {
-        return docker.getStatus(containerId);
-    }
-
-    @Transactional
-    public Container restart(String containerId) {
-        docker.restart(containerId);
         return docker.getStatus(containerId);
     }
 }

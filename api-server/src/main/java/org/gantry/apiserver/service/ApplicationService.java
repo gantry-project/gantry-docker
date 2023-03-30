@@ -30,7 +30,7 @@ public class ApplicationService {
     @Transactional
     public Container execute(Long applicationId) {
         var application = this.findById(applicationId)
-                .orElseThrow(() -> new NoSuchApplicationException());
+                .orElseThrow(NoSuchApplicationException.with(applicationId));
         String containerId = docker.run(application);
         return docker.getStatus(containerId);
     }

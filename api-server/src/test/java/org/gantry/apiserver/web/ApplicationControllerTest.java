@@ -16,9 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -31,11 +33,14 @@ class ApplicationControllerTest {
     @MockBean
     private ApplicationService service;
 
+    private static Container testContainer;
     private static Application testApplication;
 
     @BeforeAll
     static void createFixtures() {
-        testApplication = Application.builder().title("test").image("repo/repo:latest").container(new Container()).build();
+        testContainer = Container.builder().id("test0001").status(RUNNING).build();
+        testApplication = Application.builder().title("test").image("repo/repo:latest").container(testContainer).build();
+        testContainer.setApplication(testApplication);
     }
 
     @Test
@@ -58,14 +63,13 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("title").value("test"));
     }
 
-//    @Test
-//    void execute() throws Exception {
-//        var dto = Container.builder().id("1234").applicationId(1L).status(ContainerStatus.CREATED).build();
-//        given(service.execute(anyLong())).willReturn(dto);
-//
-//        mockMvc.perform(post("/applications/1/execute"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("id").value("9999"));
-//    }
+    @Test
+    void execute() throws Exception {
+        given(service.execute(anyLong())).willReturn(testContainer);
+
+        mockMvc.perform(post("/applications/1/execute"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").value("test0001"));
+    }
 }

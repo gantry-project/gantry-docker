@@ -88,9 +88,9 @@ class ContainerControllerTest {
 
     @Test
     void getStatus() throws Exception {
-        given(service.getStatus(anyString())).willReturn(testContainer);
+        given(service.findById(anyString())).willReturn(testContainer);
 
-        mockMvc.perform(get("/containers/testid0001/status"))
+        mockMvc.perform(get("/containers/testid0001"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("testid0001"))

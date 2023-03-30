@@ -3,13 +3,15 @@ package org.gantry.apiserver.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
-@Data
-@Entity
 @NoArgsConstructor
-public class Container {
+@Data
+@EqualsAndHashCode(callSuper=false)
+@Entity
+public class Container extends  BaseTimeEntity {
     @Id
     @Column(name = "container_id")
     private String id;
