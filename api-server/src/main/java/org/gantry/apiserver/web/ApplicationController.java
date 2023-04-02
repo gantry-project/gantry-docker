@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/applications")
+@RequestMapping("/api/v1/applications")
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class ApplicationController {
