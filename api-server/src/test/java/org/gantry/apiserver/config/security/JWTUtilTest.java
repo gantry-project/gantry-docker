@@ -1,4 +1,4 @@
-package org.gantry.apiserver.util.jwt;
+package org.gantry.apiserver.config.security;
 
 import org.gantry.apiserver.config.security.JWTUtil;
 import org.gantry.apiserver.config.security.JWTProperties;

@@ -123,7 +123,7 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "health")
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/health")
                 .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -146,6 +146,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/health").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .exceptionHandling()

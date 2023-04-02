@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/v1/applications")
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/v1/applications")
 public class ApplicationController {
 
     private final ApplicationService service;
