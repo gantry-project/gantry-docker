@@ -52,7 +52,7 @@ class ContainerControllerTest {
         testContainer.setApplication(testApplication);
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void stop() throws Exception {
         testContainer.setStatus(PAUSED);
@@ -66,7 +66,7 @@ class ContainerControllerTest {
     }
 
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void restart() throws Exception {
         testContainer.setStatus(RESTARTING);
@@ -79,7 +79,7 @@ class ContainerControllerTest {
                 .andExpect(jsonPath("status").value("RESTARTING"));
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void remove() throws Exception {
         testContainer.setStatus(REMOVING);
@@ -92,7 +92,7 @@ class ContainerControllerTest {
                 .andExpect(jsonPath("status").value("REMOVING"));
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void getStatus() throws Exception {
         given(service.findById(anyString())).willReturn(testContainer);
@@ -104,7 +104,7 @@ class ContainerControllerTest {
                 .andExpect(jsonPath("status").value("RUNNING"));
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void list() throws Exception {
         given(service.findRunningContainers()).willReturn(List.of(testContainer, testContainer));

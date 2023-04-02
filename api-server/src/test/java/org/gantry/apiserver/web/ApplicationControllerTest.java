@@ -46,7 +46,7 @@ class ApplicationControllerTest {
         testContainer.setApplication(testApplication);
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void list() throws Exception {
         given(service.findAll()).willReturn(List.of(testApplication));
@@ -57,7 +57,7 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("[0].title").value("test"));
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void getOne() throws Exception {
         given(service.findById(anyLong())).willReturn(Optional.of(testApplication));
@@ -68,7 +68,7 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("title").value("test"));
     }
 
-    @WithMockUser(username="user")
+    @WithMockUser
     @Test
     void execute() throws Exception {
         given(service.execute(anyLong())).willReturn(testContainer);
