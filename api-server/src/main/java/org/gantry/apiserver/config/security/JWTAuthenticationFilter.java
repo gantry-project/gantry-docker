@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.gantry.apiserver.domain.User;
 import org.gantry.apiserver.web.dto.ErrorResponse;
+import org.gantry.apiserver.web.dto.UserDto;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,25 +47,32 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         User principal = (User) authResult.getPrincipal();
         String token =  jwtUtil.create(principal);
         response.addHeader(AUTHZ_HEADER, BEARER_PREFIX + token);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        OutputStream responseStream = response.getOutputStream();
+        UserDto dto = UserDto.from(principal);
+        dto.setAccessToken(token);
+        objectMapper.writeValue(responseStream, dto);
+        responseStream.flush();
     }
 
-//    @Override
-//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-//        exception.printStackTrace();
-//        response.setStatus(SC_UNAUTHORIZED);
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//
-//        OutputStream responseStream = response.getOutputStream();
-//        objectMapper.writeValue(responseStream, ErrorResponse.builder()
-//                .uri(request.getRequestURI())
-//                .status(UNAUTHORIZED)
-//                .message("Authentication Failed")
-//                .detail(exception.getMessage())
-//                .build());
-//        responseStream.flush();
-//    }
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        exception.printStackTrace();
+        response.setStatus(SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        OutputStream responseStream = response.getOutputStream();
+        objectMapper.writeValue(responseStream, ErrorResponse.builder()
+                .uri(request.getRequestURI())
+                .status(UNAUTHORIZED)
+                .message("Authentication Failed")
+                .detail(exception.getMessage())
+                .build());
+        responseStream.flush();
+    }
 }

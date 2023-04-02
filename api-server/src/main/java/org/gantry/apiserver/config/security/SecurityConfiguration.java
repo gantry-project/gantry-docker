@@ -1,6 +1,7 @@
 package org.gantry.apiserver.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.connector.ResponseFacade;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -64,41 +66,59 @@ public class SecurityConfiguration {
                 .build();
     }
 
-//    @Bean
-//    public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
-//        return (request, response, exception) -> {
-//            exception.printStackTrace();
-//            response.setStatus(SC_UNAUTHORIZED);
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//
-//            OutputStream responseStream = response.getOutputStream();
-//            objectMapper.writeValue(responseStream, ErrorResponse.builder()
-//                    .uri(request.getRequestURI())
-//                    .status(UNAUTHORIZED)
-//                    .message("Authentication Failed")
-//                    .detail(exception.getMessage())
-//                    .build());
-//            responseStream.flush();
-//        };
-//    }
-//
-//    @Bean
-//    public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
-//        return (request, response, exception) -> {
-//            exception.printStackTrace();
-//            response.setStatus(SC_FORBIDDEN);
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            OutputStream responseStream = response.getOutputStream();
-//
-//            objectMapper.writeValue(responseStream, ErrorResponse.builder()
-//                    .uri(request.getRequestURI())
-//                    .status(UNAUTHORIZED)
-//                    .message("Access Denied")
-//                    .detail(exception.getMessage())
-//                    .build());
-//            responseStream.flush();
-//        };
-//    }
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler(ObjectMapper objectMapper) {
+        return (request, response, exception) -> {
+            exception.printStackTrace();
+            response.setStatus(SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            OutputStream responseStream = response.getOutputStream();
+            objectMapper.writeValue(responseStream, ErrorResponse.builder()
+                    .uri(request.getRequestURI())
+                    .status(UNAUTHORIZED)
+                    .message("Authentication Failed")
+                    .detail(exception.getMessage())
+                    .build());
+            responseStream.flush();
+        };
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
+        return (request, response, exception) -> {
+            exception.printStackTrace();
+            response.setStatus(SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            OutputStream responseStream = response.getOutputStream();
+            objectMapper.writeValue(responseStream, ErrorResponse.builder()
+                    .uri(request.getRequestURI())
+                    .status(UNAUTHORIZED)
+                    .message("Authentication Failed")
+                    .detail(exception.getMessage())
+                    .build());
+            responseStream.flush();
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+        return (request, response, exception) -> {
+            exception.printStackTrace();
+            response.setStatus(SC_FORBIDDEN);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            OutputStream responseStream = response.getOutputStream();
+
+            objectMapper.writeValue(responseStream, ErrorResponse.builder()
+                    .uri(request.getRequestURI())
+                    .status(UNAUTHORIZED)
+                    .message("Access Denied")
+                    .detail(exception.getMessage())
+                    .build());
+            responseStream.flush();
+        };
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -113,24 +133,25 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager,
                                            JWTUtil jwtUtil, ObjectMapper objectMapper) throws Exception {
         JWTAuthenticationFilter jwtAuthnFilter = new JWTAuthenticationFilter(authenticationManager, jwtUtil, objectMapper);
-        JWTAuthorizationFilter jwtAuthzFilter = new JWTAuthorizationFilter(authenticationManager, jwtUtil);
+        JWTAuthorizationFilter jwtAuthzFilter = new JWTAuthorizationFilter(authenticationManager, jwtUtil, objectMapper);
 
         http.csrf().disable()
             .httpBasic().disable()
+            .formLogin().disable()
             .addFilter(jwtAuthnFilter)
             .addFilter(jwtAuthzFilter)
             .cors()
                 .and()
             .authorizeHttpRequests()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/join").permitAll()
+                .requestMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-//            .exceptionHandling()
-//                .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
-//                .accessDeniedHandler(accessDeniedHandler(objectMapper))
-//                .and()
+            .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
+                .accessDeniedHandler(accessDeniedHandler(objectMapper))
+                .and()
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
