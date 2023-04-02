@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/containers")
+@RequestMapping("/api/v1/containers")
 @RestController
 public class ContainerController {
 

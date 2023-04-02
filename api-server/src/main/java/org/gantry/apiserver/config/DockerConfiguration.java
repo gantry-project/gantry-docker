@@ -11,15 +11,15 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Duration;
 
 @Configuration
-@ConfigurationProperties(prefix = "docker")
+@ConfigurationProperties(prefix = "gantry.docker")
 public class DockerConfiguration {
     @Setter
-    private String dockerHost;
+    private String host;
 
     @Bean
     DockerClient dockerClientConfig(){
         DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost(dockerHost)
+                .withDockerHost(host)
                 .build();
 
         ApacheDockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
