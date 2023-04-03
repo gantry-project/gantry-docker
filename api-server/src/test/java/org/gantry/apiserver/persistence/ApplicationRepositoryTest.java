@@ -1,6 +1,7 @@
 package org.gantry.apiserver.persistence;
 
 import org.gantry.apiserver.domain.Application;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,11 @@ class ApplicationRepositoryTest {
 
     @Autowired
     private ApplicationRepository repository;
+
+    @BeforeEach
+    void clean() {
+        repository.deleteAll();
+    }
 
     @Test
     void findAll() {
