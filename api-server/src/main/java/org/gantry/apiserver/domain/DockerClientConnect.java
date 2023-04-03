@@ -3,7 +3,6 @@ package org.gantry.apiserver.domain;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import jakarta.ws.rs.NotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.gantry.apiserver.exception.NoSuchContainerException;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import static org.gantry.apiserver.domain.ContainerStatus.of;
+
 
 
 @Component
@@ -56,6 +56,7 @@ public class DockerClientConnect {
         Container container = findContainerId(containerId);
         dockerClient.stopContainerCmd(container.getId()).exec();
         containerRepository.delete(container);
+
     }
     @Transactional
     public String restart(String containerId) {
@@ -72,16 +73,4 @@ public class DockerClientConnect {
         findContainer.setStatus(of(dockerContainer.getStatus()));
         return findContainer;
     }
-
-    public List<Container> containerList() {
-        return dockerClient.listContainersCmd().exec().stream().map(c -> {
-            Container container = Container.builder()
-                                        .id(c.getId())
-                                        .build();
-            Application application = findContainerId(c.getId()).getApplication();
-            container.setApplication(application);
-            return container;
-        }).toList();
-    }
-
 }
