@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import styled from "@emotion/styled";
 
@@ -32,3 +33,39 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
+=======
+import React from "react";
+import styled from "@emotion/styled";
+
+//component
+import DockerListHeader from "../components/DockerList/DockerListHeader";
+import DockerCat from "../components/DockerList/DockerCat";
+import { dummyData } from "../dummyData";
+
+const DockerList = () => {
+  return (
+    <Container>
+      <DockerListHeader />
+      <Wrapper>
+        <DockerCat state={true} datas={dummyData} />
+      </Wrapper>
+    </Container>
+  );
+};
+
+export default DockerList;
+
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+  background-color: whitesmoke;
+  padding: 10px;
+`;
+const Wrapper = styled.div`
+  padding: 50px;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+`;
+>>>>>>> 2916dd479f69ed343ba47b234452038c6e8999f3
