@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
-
 @RequiredArgsConstructor
 @Service
 public class ContainerService {
@@ -18,8 +16,8 @@ public class ContainerService {
 
     private final DockerClientConnect docker;
 
-    public List<Container> findRunningContainers() {
-        return repository.findByStatus(RUNNING);
+    public List<Container> findAll() {
+        return repository.findAll();
     }
 
     public Container findById(String containerId) {

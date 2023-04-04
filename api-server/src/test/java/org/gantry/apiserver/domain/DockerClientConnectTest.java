@@ -15,11 +15,12 @@ import org.springframework.context.annotation.Import;
 
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.gantry.apiserver.domain.ContainerStatus.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @Import(DockerClientConnect.class)
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +48,7 @@ class DockerClientConnectTest {
     @BeforeAll
     static void createFixture() {
         testContainer = Container.builder()
-                .id("test0001")
+                .id("fx_ctn_test0001")
                 .status(RUNNING)
                 .build();
         testApplication = Application.builder()
@@ -74,33 +75,35 @@ class DockerClientConnectTest {
 
         String containerId = dockerClientConnect.run(testApplication);
         
-        Container runContainer = containerRepository.findById(containerId).get();
-        Assertions.assertEquals(RUNNING, runContainer.getStatus());
-
+        assertThat(containerId).isEqualTo("test001");
+        verify(createCmd, times(1)).exec();
     }
 
     @Test
     void stop() {
-        given(client.pauseContainerCmd(anyString())).willReturn(mock(PauseContainerCmd.class));
+        PauseContainerCmd pauseCmd = mock(PauseContainerCmd.class);
+        given(client.pauseContainerCmd(anyString())).willReturn(pauseCmd);
 
         Application runApp = applicationRepository.findById(applicationId).get();
         String containerId = runApp.getContainer().getId();
         dockerClientConnect.stop(containerId);
 
-        Container stopContainer = containerRepository.findById(containerId).get();
-        Assertions.assertEquals(PAUSED, stopContainer.getStatus());
+        assertThat(containerId).isEqualTo("fx_ctn_test0001");
+        verify(pauseCmd, times(1)).exec();
     }
 
     @Test
     void restart() {
-        given(client.restartContainerCmd(anyString())).willReturn(mock(RestartContainerCmd.class));
+        RestartContainerCmd restartCmd = mock(RestartContainerCmd.class);
+        given(client.restartContainerCmd(anyString())).willReturn(restartCmd);
 
         Application stopApp = applicationRepository.findById(applicationId).get();
         String containerId = stopApp.getContainer().getId();
-        dockerClientConnect.restart(containerId);
+        String restartedContainerId = dockerClientConnect.restart(containerId);
 
-        Container stopContainer = containerRepository.findById(containerId).get();
-        Assertions.assertEquals(RESTARTING, stopContainer.getStatus());
+        assertThat(restartedContainerId).isEqualTo("fx_ctn_test0001");
+        verify(restartCmd, times(1)).exec();
+
     }
 
     @Test

@@ -24,8 +24,8 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @GetMapping
-    public List<ContainerRequest> listRunningContainers() {
-        return service.findRunningContainers().stream()
+    public List<ContainerRequest> list() {
+        return service.findAll().stream()
                 .map(ContainerRequest::from)
                 .toList();
     }
