@@ -1,6 +1,5 @@
 package org.gantry.apiserver.web;
 
-import lombok.With;
 import org.gantry.apiserver.domain.Application;
 import org.gantry.apiserver.domain.Container;
 import org.gantry.apiserver.service.ContainerService;
@@ -107,7 +106,7 @@ class ContainerControllerTest {
     @WithMockUser
     @Test
     void list() throws Exception {
-        given(service.findRunningContainers()).willReturn(List.of(testContainer, testContainer));
+        given(service.findAll()).willReturn(List.of(testContainer, testContainer));
 
         mockMvc.perform(get("/api/v1/containers"))
                 .andExpect(status().isOk())
