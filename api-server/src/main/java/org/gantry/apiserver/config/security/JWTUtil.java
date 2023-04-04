@@ -30,7 +30,7 @@ public class JWTUtil {
                 .withClaim("username", user.getUsername())
                 .withClaim("email", user.getEmail());
         if (user.getAuthority() != null) {
-            builder.withClaim("authority", user.getAuthority().toString());
+            builder.withClaim("authority", user.getAuthority().name());
         }
         return builder.sign(getAlgorithm());
     }
@@ -53,7 +53,7 @@ public class JWTUtil {
         if (!email.isMissing()) user.setEmail(email.asString());
 
         Claim authority = decoded.getClaim("authority");
-        if (!authority.isMissing() && Arrays.asList(Authority.values()).contains(authority)) {
+        if (!authority.isMissing() && Authority.isValid(authority.asString())) {
             user.setAuthority(Authority.valueOf(authority.asString()));
         }
 
