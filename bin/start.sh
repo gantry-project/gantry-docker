@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage="Usage: start.sh [frontend|api-server]"
+usage="Usage: start.sh [front|api-server]"
 
 if [ $# -ne 1 ]; then
   echo $usage
@@ -12,7 +12,7 @@ change_directory() {
   cd "${SCRIPT_HOME}" || exit
 }
 
-if [[ "$1" == "frontend" ]]; then
+if [[ "$1" == "front" ]]; then
   echo Starting frontend;
   change_directory;
   exec ./run-frontend.sh
@@ -21,6 +21,6 @@ elif [[ "$1" == "api-server" ]]; then
   change_directory;
   exec ./run-api-server.sh
 else
-  echo "Unknown module";
+  echo "Unknown module:" "$1";
   echo $usage;
 fi
