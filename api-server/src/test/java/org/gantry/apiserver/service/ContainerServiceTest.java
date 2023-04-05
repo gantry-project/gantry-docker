@@ -30,8 +30,8 @@ class ContainerServiceTest {
 
     @Test
     void list() {
-        given(repository.findByStatus(RUNNING)).willReturn(List.of(Container.builder().id("test").build()));
-        List<Container> list = service.findRunningContainers();
+        given(repository.findAll()).willReturn(List.of(Container.builder().id("test").build()));
+        List<Container> list = service.findAll();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getId()).isEqualTo("test");
     }

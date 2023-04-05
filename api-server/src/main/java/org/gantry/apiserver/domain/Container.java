@@ -1,14 +1,12 @@
 package org.gantry.apiserver.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @EqualsAndHashCode(callSuper=false)
 @Entity
 public class Container extends  BaseTimeEntity {
@@ -20,13 +18,12 @@ public class Container extends  BaseTimeEntity {
     @JoinColumn(name = "application_id")
     private Application application;
 
+    @Transient
     @Enumerated(EnumType.STRING)
     private ContainerStatus status;
 
-    @Builder
-    public Container(String id, Application application, ContainerStatus status) {
+    public Container(String id, Application application) {
         this.id = id;
         this.application = application;
-        this.status = status;
     }
 }

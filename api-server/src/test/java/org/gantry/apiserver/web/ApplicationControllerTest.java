@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,31 +46,34 @@ class ApplicationControllerTest {
         testContainer.setApplication(testApplication);
     }
 
+    @WithMockUser
     @Test
     void list() throws Exception {
         given(service.findAll()).willReturn(List.of(testApplication));
 
-        mockMvc.perform(get("/applications"))
+        mockMvc.perform(get("/api/v1/applications"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("[0].title").value("test"));
     }
 
+    @WithMockUser
     @Test
     void getOne() throws Exception {
         given(service.findById(anyLong())).willReturn(Optional.of(testApplication));
 
-        mockMvc.perform(get("/applications/1"))
+        mockMvc.perform(get("/api/v1/applications/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("title").value("test"));
     }
 
+    @WithMockUser
     @Test
     void execute() throws Exception {
         given(service.execute(anyLong())).willReturn(testContainer);
 
-        mockMvc.perform(post("/applications/1/execute"))
+        mockMvc.perform(post("/api/v1/applications/1/execute").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("test0001"));
