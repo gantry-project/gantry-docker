@@ -11,4 +11,4 @@ if [[ -z ${EXECUTABLE_JAR} ]]; then
 fi
 
 echo "Execution Passed.";
-java -jar "${EXECUTABLE_JAR}"
+exec java -jar "${EXECUTABLE_JAR}"
