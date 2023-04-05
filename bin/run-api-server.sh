@@ -10,5 +10,4 @@ if [[ -z ${EXECUTABLE_JAR} ]]; then
   exit 1;
 fi
 
-echo "Execution Passed.";
 exec java -jar "${EXECUTABLE_JAR}"
