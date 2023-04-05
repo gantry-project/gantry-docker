@@ -1,0 +1,23 @@
+FROM rockylinux:9 AS builder
+WORKDIR /
+
+RUN yum update -y && \
+    yum install -y git java-17-openjdk-devel.x86_64
+
+RUN git clone https://github.com/gantry-project/gantry-docker.git
+
+WORKDIR /gantry-docker
+
+RUN bin/build-api-server.sh
+RUN bin/test-api-server.sh
+RUN bin/deploy-api-server.sh
+
+FROM openjdk:17
+WORKDIR /gantry-docker
+
+COPY --from=builder /gantry-docker/build/api-server-0.0.1.jar /gantry-docker/build/.
+COPY --from=builder /gantry-docker/bin/run-api-server.sh /gantry-docker/bin/.
+
+EXPOSE 8080
+
+CMD bin/run-api-server.sh
