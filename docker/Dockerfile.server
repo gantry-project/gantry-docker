@@ -15,8 +15,8 @@ RUN bin/deploy-api-server.sh
 FROM openjdk:17
 WORKDIR /gantry-docker
 
-COPY --from=builder /gantry-docker/build/api-server-0.0.1.jar /gantry-docker/build/.
-COPY --from=builder /gantry-docker/bin/run-api-server.sh /gantry-docker/bin/.
+COPY --from=builder /gantry-docker/build/api-server-0.0.1.jar /gantry-docker/build/api-server-0.0.1.jar
+COPY --from=builder /gantry-docker/bin/run-api-server.sh /gantry-docker/bin/run-api-server.sh
 
 EXPOSE 8080
 
