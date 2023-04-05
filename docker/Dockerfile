@@ -30,4 +30,4 @@ COPY --from=builder /gantry-docker/bin /gantry-docker/bin
 EXPOSE 8080
 
 ENTRYPOINT ["bin/start.sh"]
-CMD ["server"]
+CMD ["api-server"]
