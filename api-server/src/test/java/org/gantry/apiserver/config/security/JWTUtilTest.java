@@ -1,7 +1,5 @@
 package org.gantry.apiserver.config.security;
 
-import org.gantry.apiserver.config.security.JWTUtil;
-import org.gantry.apiserver.config.security.JWTProperties;
 import org.gantry.apiserver.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.gantry.apiserver.domain.User;
 import org.gantry.apiserver.web.dto.ErrorResponse;
-import org.gantry.apiserver.web.dto.UserDto;
+import org.gantry.apiserver.web.dto.UserTokenResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,9 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.gantry.apiserver.config.security.JWTProperties.AUTHZ_HEADER;
 import static org.gantry.apiserver.config.security.JWTProperties.BEARER_PREFIX;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -54,7 +52,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         OutputStream responseStream = response.getOutputStream();
-        UserDto dto = UserDto.from(principal);
+        UserTokenResponse dto = UserTokenResponse.from(principal);
         dto.setAccessToken(token);
         objectMapper.writeValue(responseStream, dto);
         responseStream.flush();
@@ -63,7 +61,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         exception.printStackTrace();
-        response.setStatus(SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         OutputStream responseStream = response.getOutputStream();
