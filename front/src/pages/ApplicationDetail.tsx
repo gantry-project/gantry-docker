@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import axios from "axios";
 
-const ContainerDetail = () => {
+const ApplicationDetail = () => {
+  const [container, setContainer] = useState({});
+
+  const getContainers = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/applications/1");
+      console.log("rescontainer", res); // 값이 없음
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  getContainers();
   return (
     <Container>
       <DetailItemsContainer>
@@ -30,7 +42,7 @@ const ContainerDetail = () => {
   );
 };
 
-export default ContainerDetail;
+export default ApplicationDetail;
 
 const Container = styled.div`
   width: 100%;

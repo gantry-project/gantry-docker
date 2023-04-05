@@ -24,7 +24,7 @@ interface Props {
   state: boolean;
 }
 
-const DockerCat: FC<Props> = ({ datas, state }) => {
+const ApplicationCat: FC<Props> = ({ datas, state }) => {
   const [isHovered, setIsHovered] = useState(state);
   const [containers, setContainers] = useState<Containers>();
 
@@ -73,7 +73,7 @@ const DockerCat: FC<Props> = ({ datas, state }) => {
   );
 };
 
-export default DockerCat;
+export default ApplicationCat;
 
 const Container = styled.div`
   /* flex-direction: column; */

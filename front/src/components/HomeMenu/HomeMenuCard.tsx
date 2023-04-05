@@ -6,12 +6,12 @@ const HomeMenuCard = () => {
   const navigate = useNavigate();
 
   const onClickHandler = useCallback(() => {
-    navigate(`/dockerList`);
+    navigate(`/applicationsList`);
   }, []);
 
   return (
     <Container onClick={onClickHandler}>
-      <Title>DockerList</Title>
+      <Title>Application</Title>
     </Container>
   );
 };
@@ -26,5 +26,5 @@ const Container = styled.div`
   cursor: pointer;
 `;
 const Title = styled.h1`
-  font-size: 50px;
+  font-size: 45px;
 `;

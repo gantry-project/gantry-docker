@@ -2,11 +2,11 @@ import React from "react";
 import styled from "@emotion/styled";
 
 //component
-import DockerListHeader from "../components/DockerList/DockerListHeader";
-import DockerCat from "../components/DockerList/DockerCat";
+import DockerListHeader from "../components/ApplicationList/ApplicationListHeader";
+import DockerCat from "../components/ApplicationList/ApplicationCat";
 import { dummyData } from "../dummyData";
 
-const DockerList = () => {
+const ApplicationsList = () => {
   return (
     <Container>
       <DockerListHeader />
@@ -17,7 +17,7 @@ const DockerList = () => {
   );
 };
 
-export default DockerList;
+export default ApplicationsList;
 
 const Container = styled.div`
   height: 100%;
@@ -28,7 +28,6 @@ const Container = styled.div`
 const Wrapper = styled.div`
   padding: 50px;
   padding: 20px;
-
   display: flex;
   flex-direction: column;
 `;
