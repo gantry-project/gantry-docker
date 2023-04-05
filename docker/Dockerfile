@@ -21,13 +21,16 @@ FROM openjdk:17
 WORKDIR /gantry-docker
 
 RUN curl -SL https://nodejs.org/dist/v18.15.0/node-v18.15.0-linux-x64.tar.gz | tar xzv && \
-    export PATH=${PATH}:${pwd}/node-v18.15.0-linux-x64/bin && \
-    npm install -g serve
+     mv node-v18.15.0-linux-x64 node && \
+     export PATH=${PATH}:$(pwd)/node/bin && \
+     cd node/bin && \
+     node npm install -g serve
 
 COPY --from=builder /gantry-docker/build /gantry-docker/build
 COPY --from=builder /gantry-docker/bin /gantry-docker/bin
 
-EXPOSE 8080
+EXPOSE 3000/tcp
+EXPOSE 8080/tcp
 
 ENTRYPOINT ["bin/start.sh"]
 CMD ["api-server"]
