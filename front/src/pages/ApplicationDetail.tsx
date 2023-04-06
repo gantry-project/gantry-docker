@@ -1,37 +1,48 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import axios from "axios";
 
-const ContainerDetail = () => {
-    return (
-        <Container>
-            <DetailItemsContainer>
-                <DetailContainer>
-                    <RightContainer>
-                        <Logo>로고 이미지</Logo>
-                    </RightContainer>
-                    <LeftWrapper>
-                        <TopItem>
-                            <Title>Rstudio</Title>
-                            <LaunchBtn>LAUNCH</LaunchBtn>
-                        </TopItem>
-                        <BottomItem>설명</BottomItem>
-                    </LeftWrapper>
-                </DetailContainer>
-                <SnapchatWrapper>
-                    <Title>Snashots</Title>
-                    <SliderWrapp> 그림 들어갈 곳 </SliderWrapp>
-                </SnapchatWrapper>
-                <ConfigWrapper>
-                    <Title>Configuration</Title>
-                    <ConfigText></ConfigText>
-                </ConfigWrapper>
-            </DetailItemsContainer>
-        </Container>
-    );
+const ApplicationDetail = () => {
+  const [container, setContainer] = useState({});
+
+  const getContainers = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/applications/1");
+      console.log("rescontainer", res); // 값이 없음
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  getContainers();
+  return (
+    <Container>
+      <DetailItemsContainer>
+        <DetailContainer>
+          <RightContainer>
+            <Logo>로고 이미지</Logo>
+          </RightContainer>
+          <LeftWrapper>
+            <TopItem>
+              <Title>Rstudio</Title>
+              <LaunchBtn>LAUNCH</LaunchBtn>
+            </TopItem>
+            <BottomItem>설명</BottomItem>
+          </LeftWrapper>
+        </DetailContainer>
+        <SnapchatWrapper>
+          <Title>Snashots</Title>
+          <SliderWrapp> 그림 들어갈 곳 </SliderWrapp>
+        </SnapchatWrapper>
+        <ConfigWrapper>
+          <Title>Configuration</Title>
+          <ConfigText></ConfigText>
+        </ConfigWrapper>
+      </DetailItemsContainer>
+    </Container>
+  );
 };
 
-export default ContainerDetail;
+export default ApplicationDetail;
 
 const Container = styled.div`
   width: 100%;
