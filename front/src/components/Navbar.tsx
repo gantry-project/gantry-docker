@@ -7,7 +7,7 @@ import Badge from "@mui/material/Badge";
 import { FaCartPlus } from "react-icons/fa";
 
 //compoents
-import Modal from "../Modal";
+import Modal from "./Modal";
 
 const Navbar = () => {
   const [loginstate, setLoginState] = useState(true);

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Modal = () => {
   const navigate = useNavigate();
   const onClickHandler = useCallback(() => {
-    navigate(`/userContainer`);
+    navigate(`/user/container`);
   }, []);
   return (
     <Container>
