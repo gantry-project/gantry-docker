@@ -1,34 +1,33 @@
-
 import React from "react";
 import styled from "@emotion/styled";
 
 const ContainerDetail = () => {
-    return (
-        <Container>
-            <DetailItemsContainer>
-                <DetailContainer>
-                    <RightContainer>
-                        <Logo>로고 이미지</Logo>
-                    </RightContainer>
-                    <LeftWrapper>
-                        <TopItem>
-                            <Title>Rstudio</Title>
-                            <LaunchBtn>LAUNCH</LaunchBtn>
-                        </TopItem>
-                        <BottomItem>설명</BottomItem>
-                    </LeftWrapper>
-                </DetailContainer>
-                <SnapchatWrapper>
-                    <Title>Snashots</Title>
-                    <SliderWrapp> 그림 들어갈 곳 </SliderWrapp>
-                </SnapchatWrapper>
-                <ConfigWrapper>
-                    <Title>Configuration</Title>
-                    <ConfigText></ConfigText>
-                </ConfigWrapper>
-            </DetailItemsContainer>
-        </Container>
-    );
+  return (
+    <Container>
+      <DetailItemsContainer>
+        <DetailContainer>
+          <RightContainer>
+            <Logo>로고 이미지</Logo>
+          </RightContainer>
+          <LeftWrapper>
+            <TopItem>
+              <Title>Rstudio</Title>
+              <LaunchBtn>LAUNCH</LaunchBtn>
+            </TopItem>
+            <BottomItem>설명</BottomItem>
+          </LeftWrapper>
+        </DetailContainer>
+        <SnapchatWrapper>
+          <Title>Snashots</Title>
+          <SliderWrapp> 그림 들어갈 곳 </SliderWrapp>
+        </SnapchatWrapper>
+        <ConfigWrapper>
+          <Title>Configuration</Title>
+          <ConfigText></ConfigText>
+        </ConfigWrapper>
+      </DetailItemsContainer>
+    </Container>
+  );
 };
 
 export default ContainerDetail;

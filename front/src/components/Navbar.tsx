@@ -6,8 +6,12 @@ import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import { FaCartPlus } from "react-icons/fa";
 
+//compoents
+import Modal from "../Modal";
+
 const Navbar = () => {
   const [loginstate, setLoginState] = useState(true);
+  const [modalstate, setModalstate] = useState(false);
   const navigate = useNavigate();
 
   const onClickHandlerHome = useCallback(() => {
@@ -18,34 +22,41 @@ const Navbar = () => {
     navigate(`/userAppCart`);
   }, []);
   // logo 부분에 사이드바 클릭 버튼
+
+  const onClickModal = useCallback(() => {
+    setModalstate((pre) => !pre);
+  }, []);
   return (
-    <Container>
-      <Wrapper>
-        <Logo onClick={onClickHandlerHome}>GANTRY-DOCKER</Logo>
-        <MainItem>
-          <Item>WHY GRANTRY</Item>
-          <Item>PRODUCTS</Item>
-          <Item>DOCS</Item>
-          <Item>LEARN </Item>
-          <Item>COMMUNITY </Item>
-        </MainItem>
-        <RegisterContainer>
-          {loginstate ? (
-            <UserProfileWrapper>
-              <UserProfile>hello oo님</UserProfile>
-              <Badge badgeContent={4} color="primary">
-                <UserCart onClick={onClickHandlerCart}>
-                  <FaCartPlus />
-                </UserCart>
-              </Badge>
-              <UserCart></UserCart>
-            </UserProfileWrapper>
-          ) : (
-            <LoginButton>LOGIN</LoginButton>
-          )}
-        </RegisterContainer>
-      </Wrapper>
-    </Container>
+    <>
+      <Container>
+        <Wrapper>
+          <Logo onClick={onClickHandlerHome}>GANTRY-DOCKER</Logo>
+          <MainItem>
+            <Item>WHY GRANTRY</Item>
+            <Item>PRODUCTS</Item>
+            <Item>DOCS</Item>
+            <Item>LEARN </Item>
+            <Item>COMMUNITY </Item>
+          </MainItem>
+          <RegisterContainer>
+            {loginstate ? (
+              <UserProfileWrapper>
+                <UserProfile onClick={onClickModal}>프로필</UserProfile>
+                <Badge badgeContent={4} color="primary">
+                  <UserCart onClick={onClickHandlerCart}>
+                    <FaCartPlus />
+                  </UserCart>
+                </Badge>
+                <UserCart></UserCart>
+              </UserProfileWrapper>
+            ) : (
+              <LoginButton>LOGIN</LoginButton>
+            )}
+          </RegisterContainer>
+        </Wrapper>
+      </Container>
+      {modalstate ? <Modal /> : null}
+    </>
   );
 };
 
@@ -98,7 +109,6 @@ const UserProfile = styled.button`
 const UserProfileWrapper = styled.div`
   border: 0;
   width: 70%;
-
   height: 100%;
   display: flex;
   border-radius: 10px;
