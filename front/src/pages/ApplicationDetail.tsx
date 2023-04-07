@@ -7,7 +7,7 @@ const ApplicationDetail = () => {
 
   const getContainers = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/applications/1");
+      const res = await axios.get("http://localhost:8080/api/v1/applications/9000001");
       console.log("rescontainer", res); // 값이 없음
     } catch (err) {
       console.error(err);

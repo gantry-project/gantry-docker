@@ -1,6 +1,12 @@
-import React, { FC, useCallback, useState, useEffect } from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import styled from "@emotion/styled";
 import axios from "axios";
+
+interface ServerApplication {
+    containerId: string;
+    title: string;
+    image: string;
+}
 
 //compoments
 interface Containers {
@@ -32,8 +38,16 @@ const ApplicationCat: FC<Props> = ({ datas, state }) => {
   useEffect(() => {
     const getContainers = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/applications");
+        const res = await axios.get<ServerApplication[]>("http://localhost:8080/api/v1/applications");
         console.log("res", res); // 값이 없음
+        const datas = res.data.map(i => ({
+          id: i.containerId,
+          desc: i.image,
+          title: i.title,
+          img: "",
+          logo: ""
+        }));
+        setContainers({datas})
       } catch (err) {
         console.error(err);
       }
