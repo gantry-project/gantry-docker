@@ -11,6 +11,7 @@ import org.gantry.apiserver.web.dto.JoinRequest;
 import org.gantry.apiserver.web.dto.ResetPasswordRequest;
 import org.gantry.apiserver.web.dto.UserResponse;
 import org.gantry.apiserver.web.dto.UserUpdateRequest;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -80,6 +81,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Not Found a user"),
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
+    @Secured("ROLE_ADMIN")
     @PutMapping("/{userId}/authority")
     public UserResponse updateAuthority(@PathVariable Long userId, @RequestBody UserUpdateRequest updateUser) {
         throwIfMismatchUserId(userId, updateUser.getId());
