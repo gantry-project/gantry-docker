@@ -5,10 +5,7 @@ import org.gantry.apiserver.config.security.JWTUtil;
 import org.gantry.apiserver.domain.Authority;
 import org.gantry.apiserver.domain.User;
 import org.gantry.apiserver.persistence.UserRepository;
-import org.gantry.apiserver.web.dto.JoinRequest;
-import org.gantry.apiserver.web.dto.ResetPasswordRequest;
-import org.gantry.apiserver.web.dto.UserResponse;
-import org.gantry.apiserver.web.dto.UserUpdateRequest;
+import org.gantry.apiserver.web.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,17 +186,21 @@ class UserIntegrationTest {
     }
 
     @Test
-    void updateAuthority() {
+    void updateAuthority_success_withAdmin() {
         // given
         User user = createUser("user01").toUser();
         assertThat(user.getAuthority()).isEqualTo(Authority.USER);
 
         // when
         UserUpdateRequest updateUser = UserUpdateRequest.from(user);
-
         updateUser.setAuthority(Authority.ADMIN);
-        HttpEntity<UserUpdateRequest> requestEntity = new HttpEntity<>(updateUser);
-        ResponseEntity<UserResponse> response = restTemplate.exchange("/api/v1/users/%d".formatted(updateUser.getId()), PUT, requestEntity, UserResponse.class);
+        User admin = User.builder()
+                .id(9l)
+                .username("admin_user")
+                .email("admin_user@email.com")
+                .authority(Authority.ADMIN)
+                .build();
+        ResponseEntity<UserResponse> response = userAPI(PUT, "/api/v1/users/%d/authority".formatted(updateUser.getId()), admin, updateUser, UserResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -212,6 +213,23 @@ class UserIntegrationTest {
 
         User actualUser = userFromRepo.get();
         assertUser(responseUser, actualUser);
+    }
+
+    @Test
+    void updateAuthority_failure_withUser() {
+        // given
+        User user = createUser("user01").toUser();
+        assertThat(user.getAuthority()).isEqualTo(Authority.USER);
+
+        // when
+        UserUpdateRequest updateUser = UserUpdateRequest.from(user);
+
+        updateUser.setAuthority(Authority.ADMIN);
+        HttpEntity<UserUpdateRequest> requestEntity = new HttpEntity<>(updateUser);
+        ResponseEntity<ErrorResponse> response = restTemplate.exchange("/api/v1/users/%d/authority".formatted(updateUser.getId()), PUT, requestEntity, ErrorResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
