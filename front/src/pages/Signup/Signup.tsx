@@ -1,8 +1,9 @@
 import React, { useState, useCallback, ChangeEvent } from "react";
 import styled from "@emotion/styled";
+import axios from "axios";
 
 const Signup = () => {
-  const [passwordCheck, setPasswordCheck] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -11,7 +12,7 @@ const Signup = () => {
 
   const onChangePasswordCheck = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setPasswordCheck(e.target.value);
+      setConfirmPassword(e.target.value);
       setPasswordError(e.target.value !== password);
     },
     [password]
@@ -27,12 +28,26 @@ const Signup = () => {
     setPassword(e.target.value);
   };
 
-  const onSubmit = useCallback(() => {
-    if (password !== passwordCheck) {
-      return setPasswordError(true);
-    }
-    console.log(email, username, password);
-  }, [email, username, password]);
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (password !== confirmPassword) {
+        return setPasswordError(true);
+      }
+      const postSignup = async () => {
+        const res = await axios.post("http://localhost:8080/api/v1/users", {
+          usernaem: username,
+          email: email,
+          password: password,
+          confirmPassword: confirmPassword,
+        });
+        console.log(res);
+      };
+      postSignup();
+      console.log(email, username, password, confirmPassword);
+    },
+    [email, username, password]
+  );
 
   return (
     <Container>
@@ -59,6 +74,7 @@ const Signup = () => {
           <Input
             name="password"
             placeholder="password"
+            type="pasword"
             value={password}
             required
             onChange={onChangePassword}
@@ -66,8 +82,9 @@ const Signup = () => {
           <label>passwordCheck</label>
           <Input
             name="checkPassword"
+            type="pasword"
             placeholder="checkPassword"
-            value={passwordCheck}
+            value={confirmPassword}
             required
             onChange={onChangePasswordCheck}
           />
