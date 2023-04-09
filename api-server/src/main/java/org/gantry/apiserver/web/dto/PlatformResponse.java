@@ -29,4 +29,15 @@ public class PlatformResponse {
                 .active(platform.isActive())
                 .build();
     }
+
+    public Platform toPlatform() {
+        return Platform.builder()
+                .id(id)
+                .type(type)
+                .url(url)
+                .name(name)
+                .description(description)
+                .active(active)
+                .build();
+    }
 }

@@ -18,6 +18,16 @@ public class PlatformUpdateRequest {
     private String name;
     private String description;
 
+    public static PlatformUpdateRequest from(Platform platform) {
+        return PlatformUpdateRequest.builder()
+                .id(platform.getId())
+                .type(platform.getType())
+                .url(platform.getUrl())
+                .name(platform.getName())
+                .description(platform.getDescription())
+                .build();
+    }
+
     public Platform toPlatform() {
         return Platform.builder()
                 .id(id)

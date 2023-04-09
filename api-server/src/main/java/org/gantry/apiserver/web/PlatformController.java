@@ -9,12 +9,10 @@ import org.gantry.apiserver.service.PlatformService;
 import org.gantry.apiserver.web.dto.PlatformCreateRequest;
 import org.gantry.apiserver.web.dto.PlatformResponse;
 import org.gantry.apiserver.web.dto.PlatformUpdateRequest;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Secured("ROLE_ADMIN")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/platforms")
 @RestController
@@ -31,6 +29,7 @@ public class PlatformController {
     @PostMapping()
     public PlatformResponse create(@RequestBody PlatformCreateRequest createRequest) {
         Platform newPlatform = createRequest.toPlatform();
+        newPlatform.setActive(false);
         Platform platform = service.createPlatform(newPlatform);
         return PlatformResponse.from(platform);
     }
@@ -41,7 +40,6 @@ public class PlatformController {
             @ApiResponse(responseCode = "404", description = "Not Found a platform"),
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
-    @Secured("ROLE_ADMIN")
     @GetMapping()
     public List<PlatformResponse> list() {
         return service.findAll().stream().map(PlatformResponse::from).toList();
@@ -54,7 +52,7 @@ public class PlatformController {
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
     @GetMapping("/{platformId}")
-    public PlatformResponse getUser(@PathVariable Long platformId) {
+    public PlatformResponse getPlatform(@PathVariable Long platformId) {
         Platform platform = service.findById(platformId);
         return PlatformResponse.from(platform);
     }
@@ -91,7 +89,7 @@ public class PlatformController {
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
     @DeleteMapping("/{platformId}")
-    public PlatformResponse deleteUser(@PathVariable Long platformId) {
+    public PlatformResponse deletePlatform(@PathVariable Long platformId) {
         Platform platform = service.deletePlatform(platformId);
         return PlatformResponse.from(platform);
     }

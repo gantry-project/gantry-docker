@@ -128,6 +128,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                 .requestMatchers("/api/v1/users/**").permitAll()
+                .requestMatchers("/api/v1/platforms").hasAnyRole("ADMIN")
+                .requestMatchers("/api/v1/platforms/**").hasAnyRole("ADMIN")
                 .requestMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/health").permitAll()
