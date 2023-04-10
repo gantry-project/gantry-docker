@@ -2,7 +2,7 @@ package org.gantry.apiserver.service;
 
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Container;
-import org.gantry.apiserver.domain.DockerClientConnect;
+import org.gantry.apiserver.domain.docker.DockerClientConnect;
 import org.gantry.apiserver.persistence.ContainerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

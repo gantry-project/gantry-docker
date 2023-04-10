@@ -123,7 +123,7 @@ class PlatformIntegrationTest {
     private PlatformResponse createPlatform(String platformName) {
         PlatformCreateRequest request = PlatformCreateRequest.builder()
                 .type(PlatformType.DOCKER)
-                .url("http://" + platformName + ":2375")
+                .url("tcp://" + platformName + ":2375")
                 .name(platformName)
                 .description(platformName + " for test")
                 .build();
@@ -193,7 +193,7 @@ class PlatformIntegrationTest {
     }
 
     @Test
-    void activePlatform() {
+    void activatePlatform() {
         // given
 
         // given
@@ -211,9 +211,8 @@ class PlatformIntegrationTest {
         testPlatform01.setActive(true);
         assertPlatform(testPlatform01, responsePlatform);
 
-        List<Platform> activePlatforms = repository.findAll().stream().filter(Platform::isActive).toList();
+        List<Platform> activePlatforms = repository.findByActive(true);
         assertThat(activePlatforms.size()).isEqualTo(1);
         assertPlatform(activePlatforms.get(0), responsePlatform);
     }
-
 }
