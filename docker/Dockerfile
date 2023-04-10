@@ -4,7 +4,7 @@ WORKDIR /
 RUN yum update -y && \
     yum install -y git java-17-openjdk-devel.x86_64 nodejs
 
-RUN git clone https://github.com/gantry-project/gantry-docker.git
+RUN git clone -b release https://github.com/gantry-project/gantry-docker.git
 
 WORKDIR /gantry-docker
 
