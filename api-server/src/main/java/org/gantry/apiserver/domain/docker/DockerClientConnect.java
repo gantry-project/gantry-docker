@@ -1,4 +1,4 @@
-package org.gantry.apiserver.domain;
+package org.gantry.apiserver.domain.docker;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -6,14 +6,18 @@ import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import jakarta.ws.rs.NotFoundException;
 import lombok.Setter;
+import org.gantry.apiserver.domain.*;
 import org.gantry.apiserver.exception.NoSuchContainerException;
+import org.gantry.apiserver.exception.NoSuchPlatformException;
 import org.gantry.apiserver.persistence.ContainerRepository;
+import org.gantry.apiserver.persistence.PlatformRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+
 
 import static org.gantry.apiserver.domain.ContainerStatus.of;
 
@@ -24,15 +28,21 @@ public class DockerClientConnect {
 
     @Setter
     private DockerClient dockerClient;
-
+    private final DockerClientFactory dockerClientFactory;
     private final ContainerRepository containerRepository;
+    private final PlatformRepository platformRepository;
+
+
+    public DockerClientConnect(ContainerRepository containerRepository, PlatformRepository platformRepository, DockerClientFactory dockerClientFactory) {
+        this.containerRepository = containerRepository;
+        this.platformRepository = platformRepository;
+        this.dockerClientFactory = dockerClientFactory;
+        this.dockerClient = dockerClientFactory.getInstance();
+        this.lastLogTime = (int)(System.currentTimeMillis()/1000);
+    }
 
     private int lastLogTime;
 
-    public DockerClientConnect(ContainerRepository containerRepository) {
-        this.containerRepository = containerRepository;
-        this.lastLogTime = (int)(System.currentTimeMillis()/ 1000);
-    }
 
     @Transactional
     public String run(Application application) { // run = create + start
@@ -103,5 +113,12 @@ public class DockerClientConnect {
 
         findContainer.setStatus(of(dockerContainer.getStatus()));
         return findContainer;
+    }
+
+    public void refreshDockerClient() {
+        Platform platform = platformRepository.findByActiveTrueAndType(PlatformType.DOCKER)
+                .orElseThrow(NoSuchPlatformException.noActiveDockerPlatform());
+        DockerClient client = dockerClientFactory.refreshAndGetInstanceWith(() -> platform.getUrl());
+        this.setDockerClient(client);
     }
 }

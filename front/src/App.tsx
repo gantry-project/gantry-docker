@@ -4,10 +4,13 @@ import { Route, Routes } from "react-router-dom";
 //component
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
-import DockerList from "./pages/DockerList";
+import ApplicationsList from "./pages/ApplicationsList";
+import ApplicationDetail from "./pages/ApplicationDetail";
+import UserContainer from "./pages/UserContainer";
+// 보류
 import UserCart from "./pages/UserCart";
 import UserProfie from "./pages/User";
-import ContainerDetail from "./pages/ContainerDetail";
+import Signup from "./pages/Signup/Signup";
 
 function App() {
   return (
@@ -15,10 +18,13 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dockerList" element={<DockerList />} />
-          <Route path="/userAppCart" element={<UserCart />} />
-          <Route path="/containerDetail" element={<ContainerDetail />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/applicationsList" element={<ApplicationsList />} />
+          <Route path="/applicationDetail" element={<ApplicationDetail />} />
+
           <Route path="/user" element={<UserProfie />}></Route>
+          <Route path="/user/container" element={<UserContainer />} />
+          <Route path="/userAppCart" element={<UserCart />} />
         </Routes>
       </Layout>
     </div>
