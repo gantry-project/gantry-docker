@@ -19,4 +19,9 @@ public class NoSuchPlatformException extends RuntimeException {
     public static Supplier<NoSuchPlatformException> with(long platformId) {
         return () -> new NoSuchPlatformException(platformId);
     }
+
+    public static Supplier<NoSuchPlatformException> noActiveDockerPlatform() {
+        return () -> new NoSuchPlatformException("Active Docker platform information is not found.");
+
+    }
 }

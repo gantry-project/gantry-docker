@@ -1,7 +1,7 @@
 package org.gantry.apiserver.service;
 
 import org.gantry.apiserver.domain.Application;
-import org.gantry.apiserver.domain.DockerClientConnect;
+import org.gantry.apiserver.domain.docker.DockerClientConnect;
 import org.gantry.apiserver.persistence.ApplicationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

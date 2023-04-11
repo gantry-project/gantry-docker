@@ -2,6 +2,7 @@ package org.gantry.apiserver.service;
 
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Platform;
+import org.gantry.apiserver.domain.docker.DockerClientConnect;
 import org.gantry.apiserver.exception.NoSuchPlatformException;
 import org.gantry.apiserver.persistence.PlatformRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 @Service
 public class PlatformService {
     private final PlatformRepository repository;
+    private final DockerClientConnect docker;
 
     public List<Platform> findAll() {
         return repository.findAll();
@@ -53,6 +55,8 @@ public class PlatformService {
         repository.findByActive(true).stream()
                 .forEach(p -> p.setActive(false));
         platform.setActive(true);
-        return repository.save(platform);
+        Platform saved = repository.save(platform);
+        docker.refreshDockerClient();
+        return saved;
     }
 }
