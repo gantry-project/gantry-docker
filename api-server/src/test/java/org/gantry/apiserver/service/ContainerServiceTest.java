@@ -1,7 +1,7 @@
 package org.gantry.apiserver.service;
 
 import org.gantry.apiserver.domain.Container;
-import org.gantry.apiserver.domain.DockerClientConnect;
+import org.gantry.apiserver.domain.docker.DockerClientConnect;
 import org.gantry.apiserver.persistence.ContainerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gantry.apiserver.domain.ContainerStatus.RESTARTING;
-import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)

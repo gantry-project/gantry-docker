@@ -10,6 +10,7 @@ import UserContainer from "./pages/UserContainer";
 // 보류
 import UserCart from "./pages/UserCart";
 import UserProfie from "./pages/User";
+import Signup from "./pages/Signup/Signup";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/applicationsList" element={<ApplicationsList />} />
           <Route path="/applicationDetail" element={<ApplicationDetail />} />
 

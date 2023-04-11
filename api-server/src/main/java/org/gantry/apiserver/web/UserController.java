@@ -26,8 +26,8 @@ public class UserController {
     @Operation(summary = "Join a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Join a user"),
-            @ApiResponse(responseCode = "404", description = "Not Found the container"),
-            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+            @ApiResponse(responseCode = "404", description = "Not Found a user"),
+            @ApiResponse(responseCode = "500", description = "Server Error"),
     })
     @PostMapping()
     public UserResponse join(@RequestBody JoinRequest joinRequest) {
@@ -39,9 +39,9 @@ public class UserController {
         return UserResponse.from(user);
     }
 
-    @Operation(summary = "Get user information")
+    @Operation(summary = "List users information")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found user"),
+            @ApiResponse(responseCode = "200", description = "Found users"),
             @ApiResponse(responseCode = "404", description = "Not Found a user"),
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
@@ -50,9 +50,9 @@ public class UserController {
         return service.findAll().stream().map(UserResponse::from).toList();
     }
 
-    @Operation(summary = "List users information")
+    @Operation(summary = "Get user information")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found users"),
+            @ApiResponse(responseCode = "200", description = "Found user"),
             @ApiResponse(responseCode = "404", description = "Not Found a user"),
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
@@ -75,9 +75,9 @@ public class UserController {
         return UserResponse.from(user);
     }
 
-    @Operation(summary = "Update user information")
+    @Operation(summary = "Update user authority")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Update user information"),
+            @ApiResponse(responseCode = "200", description = "Update user authority"),
             @ApiResponse(responseCode = "404", description = "Not Found a user"),
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
