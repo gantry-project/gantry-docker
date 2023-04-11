@@ -2,20 +2,24 @@ package org.gantry.apiserver.domain;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Frame;
+import com.github.dockerjava.core.command.LogContainerResultCallback;
 import jakarta.ws.rs.NotFoundException;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.gantry.apiserver.exception.NoSuchContainerException;
 import org.gantry.apiserver.persistence.ContainerRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import static org.gantry.apiserver.domain.ContainerStatus.of;
 
 
 
 @Component
-@RequiredArgsConstructor
 public class DockerClientConnect {
 
     @Setter
@@ -23,13 +27,19 @@ public class DockerClientConnect {
 
     private final ContainerRepository containerRepository;
 
+    private int lastLogTime;
+
+    public DockerClientConnect(ContainerRepository containerRepository) {
+        this.containerRepository = containerRepository;
+        this.lastLogTime = (int)(System.currentTimeMillis()/ 1000);
+    }
+
     @Transactional
     public String run(Application application) { // run = create + start
         CreateContainerResponse createContainer = dockerClient.createContainerCmd(application.getImage())
                 //.withExposedPorts() 컨테이너 ExposedPorts 설정
                 .exec();
         dockerClient.startContainerCmd(createContainer.getId()).exec();
-
         containerRepository.save(Container.builder()
                 .id(createContainer.getId())
                 .application(application)
@@ -37,6 +47,27 @@ public class DockerClientConnect {
 
         return createContainer.getId();
     }
+
+    public List<String> log(String containerId) throws InterruptedException {
+        final List<String> logs = new ArrayList<>();
+        LogContainerResultCallback callBack = new LogContainerResultCallback() {
+            @Override
+            public void onNext(Frame item) {
+                logs.add(item.toString());
+            }
+        };
+        dockerClient.logContainerCmd(containerId)
+                .withStdErr(true)
+                .withStdOut(true)
+                .withFollowStream(true)
+                .withTimestamps(true)
+                .withTail(20)
+                .exec(callBack).awaitStarted();
+
+        callBack.awaitCompletion(1, TimeUnit.SECONDS);
+        return logs;
+    }
+
     @Transactional
     public void stop(String containerId) {
         Container container = findContainerId(containerId);
