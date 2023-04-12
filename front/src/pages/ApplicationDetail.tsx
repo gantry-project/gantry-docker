@@ -1,19 +1,35 @@
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 const ApplicationDetail = () => {
   const [container, setContainer] = useState({});
+  const { containerId } = useParams<{ containerId: string }>();
+  console.log("id", containerId);
 
-  const getContainers = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/v1/applications/9000001");
-      console.log("rescontainer", res); // 값이 없음
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  getContainers();
+  async function getApplication() {
+    const res = await fetch(
+      `http://localhost:8080/api/v1/applications/${containerId}`
+    );
+    return res.json();
+  }
+
+  const { data } = useQuery(["getApplication"], getApplication);
+  console.log("data!!!", data);
+
+  // const getContainers = async () => {
+  //   try {
+  //     const res = await axios.get(
+  //       "http://localhost:8080/api/v1/applications/9000001"
+  //     );
+  //     console.log("rescontainer", res); // 값이 없음
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  // getContainers();
   return (
     <Container>
       <DetailItemsContainer>
