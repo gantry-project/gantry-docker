@@ -2,6 +2,7 @@ import React, { useState, useCallback, ChangeEvent } from "react";
 import styled from "@emotion/styled";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface UserProps {
   username: string;
@@ -16,6 +17,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+  const navigate = useNavigate();
 
   async function postSignup(signupData: UserProps) {
     const res = await axios.post(
@@ -30,6 +32,7 @@ const Signup = () => {
     {
       onSuccess: (data) => {
         console.log("Server response:", data);
+        navigate("/");
       },
     }
   );
