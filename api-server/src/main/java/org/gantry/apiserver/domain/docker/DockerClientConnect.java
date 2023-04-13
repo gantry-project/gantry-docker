@@ -2,6 +2,8 @@ package org.gantry.apiserver.domain.docker;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Frame;
+import com.github.dockerjava.core.command.LogContainerResultCallback;
 import jakarta.ws.rs.NotFoundException;
 import lombok.Setter;
 import org.gantry.apiserver.domain.*;
@@ -11,8 +13,11 @@ import org.gantry.apiserver.persistence.ContainerRepository;
 import org.gantry.apiserver.persistence.PlatformRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+
 
 import static org.gantry.apiserver.domain.ContainerStatus.of;
 
@@ -27,12 +32,13 @@ public class DockerClientConnect {
     private final ContainerRepository containerRepository;
     private final PlatformRepository platformRepository;
 
-
+    private int lastLogTime;
     public DockerClientConnect(ContainerRepository containerRepository, PlatformRepository platformRepository, DockerClientFactory dockerClientFactory) {
         this.containerRepository = containerRepository;
         this.platformRepository = platformRepository;
         this.dockerClientFactory = dockerClientFactory;
         this.dockerClient = dockerClientFactory.getInstance();
+        this.lastLogTime = (int)(System.currentTimeMillis()/1000);
     }
 
     @Transactional
@@ -41,7 +47,6 @@ public class DockerClientConnect {
                 //.withExposedPorts() 컨테이너 ExposedPorts 설정
                 .exec();
         dockerClient.startContainerCmd(createContainer.getId()).exec();
-
         containerRepository.save(Container.builder()
                 .id(createContainer.getId())
                 .application(application)
@@ -49,6 +54,28 @@ public class DockerClientConnect {
 
         return createContainer.getId();
     }
+
+    public String log(String containerId) throws InterruptedException {
+        StringBuffer logs = new StringBuffer();
+        LogContainerResultCallback callBack = new LogContainerResultCallback() {
+            @Override
+            public void onNext(Frame item) {
+                logs.append(item.toString());
+                logs.append("\n");
+            }
+        };
+        dockerClient.logContainerCmd(containerId)
+                .withStdErr(true)
+                .withStdOut(true)
+                .withFollowStream(true)
+                .withTimestamps(true)
+                .withTail(50)
+                .exec(callBack).awaitStarted();
+
+        callBack.awaitCompletion(1, TimeUnit.SECONDS);
+        return logs.toString();
+    }
+
     @Transactional
     public void stop(String containerId) {
         Container container = findContainerId(containerId);

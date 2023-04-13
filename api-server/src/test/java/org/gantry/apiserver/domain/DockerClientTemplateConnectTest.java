@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,6 +85,10 @@ class DockerClientTemplateConnectTest {
         
         assertThat(containerId).isEqualTo("test001");
         verify(createCmd, times(1)).exec();
+    }
+    @Test
+    void process() throws InterruptedException, IOException {
+        dockerClientConnect.log(testContainer.getId());
     }
 
     @Test
