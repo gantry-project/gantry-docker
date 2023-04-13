@@ -35,14 +35,4 @@ public class ApplicationService {
         return docker.getStatus(containerId);
     }
 
-    public Container log(Long applicationId) throws InterruptedException {
-        var application = this.findById(applicationId)
-                .orElseThrow(NoSuchApplicationException.with(applicationId));
-        String containerId = application.getContainer().getId();
-        String log = docker.log(containerId);
-        Container container = docker.getStatus(containerId);
-        container.setLog(log);
-        return container;
-    }
-
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Container;
 import org.gantry.apiserver.service.ContainerService;
+import org.gantry.apiserver.web.dto.ContainerLogResponse;
 import org.gantry.apiserver.web.dto.ContainerResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,5 +77,15 @@ public class ContainerController {
     public ContainerResponse remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
         return ContainerResponse.from(container);
+    }
+
+    @Operation(summary = "Log an application")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logging an application"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
+    @GetMapping("/{containerId}/log")
+    public ContainerLogResponse log(@PathVariable String containerId) throws InterruptedException {
+        return ContainerLogResponse.from(service.log(containerId));
     }
 }
