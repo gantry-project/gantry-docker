@@ -1,8 +1,8 @@
-[![Docker Image Build](https://github.com/gantry-project/gantry-docker/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/gantry-project/gantry-docker/actions/workflows/docker-publish.yml)
-
 ### Gantry
 
 User-friendly web-based container service management platform
+
+[![Docker Image Build](https://github.com/gantry-project/gantry-docker/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/gantry-project/gantry-docker/actions/workflows/docker-publish.yml)
 
 ### Getting started
 
