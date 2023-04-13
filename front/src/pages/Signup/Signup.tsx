@@ -1,14 +1,41 @@
 import React, { useState, useCallback, ChangeEvent } from "react";
 import styled from "@emotion/styled";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+interface UserProps {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-
   const [passwordError, setPasswordError] = useState(false);
+  const navigate = useNavigate();
+
+  async function postSignup(signupData: UserProps) {
+    const res = await axios.post(
+      "http://localhost:8080/api/v1/users",
+      signupData
+    );
+    return res;
+  }
+
+  const postMutation = useMutation(
+    (signupData: UserProps) => postSignup(signupData),
+    {
+      onSuccess: (data) => {
+        console.log("Server response:", data);
+        navigate("/");
+      },
+    }
+  );
 
   const onChangePasswordCheck = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,21 +59,19 @@ const Signup = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (password !== confirmPassword) {
-        return setPasswordError(true);
+        setPasswordError(true);
+        return;
       }
-      const postSignup = async () => {
-        const res = await axios.post("http://localhost:8080/api/v1/users", {
-          usernaem: username,
-          email: email,
-          password: password,
-          confirmPassword: confirmPassword,
-        });
-        console.log(res);
+      const postSignupData = {
+        username: username,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
       };
-      postSignup();
-      console.log(email, username, password, confirmPassword);
+
+      postMutation.mutate(postSignupData);
     },
-    [email, username, password]
+    [email, username, password, confirmPassword, postMutation]
   );
 
   return (
@@ -74,7 +99,7 @@ const Signup = () => {
           <Input
             name="password"
             placeholder="password"
-            type="pasword"
+            type="password"
             value={password}
             required
             onChange={onChangePassword}
@@ -82,7 +107,7 @@ const Signup = () => {
           <label>passwordCheck</label>
           <Input
             name="checkPassword"
-            type="pasword"
+            type="password"
             placeholder="checkPassword"
             value={confirmPassword}
             required
