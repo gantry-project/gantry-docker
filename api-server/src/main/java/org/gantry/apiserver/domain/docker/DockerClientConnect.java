@@ -1,6 +1,7 @@
 package org.gantry.apiserver.domain.docker;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
@@ -13,11 +14,10 @@ import org.gantry.apiserver.persistence.ContainerRepository;
 import org.gantry.apiserver.persistence.PlatformRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-
+import java.util.function.Consumer;
 
 import static org.gantry.apiserver.domain.ContainerStatus.of;
 
@@ -74,6 +74,23 @@ public class DockerClientConnect {
 
         callBack.awaitCompletion(1, TimeUnit.SECONDS);
         return logs.toString();
+    }
+
+    public void tailLog(String containerId, Consumer<Frame> logConsumer) {
+        ResultCallback<Frame> callback = new ResultCallback.Adapter<>() {
+            @Override
+            public void onNext(Frame item) {
+                logConsumer.accept(item);
+            }
+        };
+
+        dockerClient.logContainerCmd(containerId)
+                .withStdErr(true)
+                .withStdOut(true)
+                .withFollowStream(true)
+                .withTimestamps(true)
+                .withTail(50)
+                .exec(callback);
     }
 
     @Transactional
