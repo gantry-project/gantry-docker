@@ -1,5 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 //component
 import Home from "./pages/Home";
@@ -12,22 +14,28 @@ import UserCart from "./pages/UserCart";
 import UserProfie from "./pages/User";
 import Signup from "./pages/Signup/Signup";
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/applicationsList" element={<ApplicationsList />} />
-          <Route path="/applicationDetail" element={<ApplicationDetail />} />
+          <Route
+            path="/applicationDetail/:containerId"
+            element={<ApplicationDetail />}
+          />
 
           <Route path="/user" element={<UserProfie />}></Route>
           <Route path="/user/container" element={<UserContainer />} />
           <Route path="/userAppCart" element={<UserCart />} />
         </Routes>
       </Layout>
-    </div>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
 

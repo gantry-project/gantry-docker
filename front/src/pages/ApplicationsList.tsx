@@ -2,16 +2,16 @@ import React from "react";
 import styled from "@emotion/styled";
 
 //component
-import DockerListHeader from "../components/ApplicationList/ApplicationListHeader";
-import DockerCat from "../components/ApplicationList/ApplicationCat";
+import ApplicationListHeader from "../components/ApplicationList/ApplicationListHeader";
+import ApplicationCat from "../components/ApplicationList/ApplicationCat";
 import { dummyData } from "../dummyData";
 
 const ApplicationsList = () => {
   return (
     <Container>
-      <DockerListHeader />
+      <ApplicationListHeader />
       <Wrapper>
-        <DockerCat state={true} datas={dummyData} />
+        <ApplicationCat />
       </Wrapper>
     </Container>
   );
