@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.gantry.apiserver.web.dto.ApplicationRequest;
+import org.gantry.apiserver.web.dto.ApplicationResponse;
 import org.gantry.apiserver.service.ApplicationService;
-import org.gantry.apiserver.web.dto.ContainerRequest;
+import org.gantry.apiserver.web.dto.ContainerLogResponse;
+import org.gantry.apiserver.web.dto.ContainerResponse;
 import org.gantry.apiserver.exception.NoSuchApplicationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +26,9 @@ public class ApplicationController {
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
     @GetMapping()
-    public List<ApplicationRequest> list() {
+    public List<ApplicationResponse> list() {
         return service.findAll().stream()
-                .map(ApplicationRequest::from)
+                .map(ApplicationResponse::from)
                 .toList();
     }
 
@@ -37,9 +38,9 @@ public class ApplicationController {
             @ApiResponse(responseCode = "500", description = "Server Error"),
     })
     @GetMapping("/{applicationId}")
-    public ApplicationRequest get(@PathVariable Long applicationId) {
+    public ApplicationResponse get(@PathVariable Long applicationId) {
         return service.findById(applicationId)
-                .map(ApplicationRequest::from)
+                .map(ApplicationResponse::from)
                 .orElseThrow(NoSuchApplicationException.with(applicationId));
     }
 
@@ -48,8 +49,18 @@ public class ApplicationController {
             @ApiResponse(responseCode = "200", description = "Launching an application"),
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
-    @PostMapping("/{applicationId}/execute")
-    public ContainerRequest execute(@PathVariable Long applicationId) {
-        return ContainerRequest.from(service.execute(applicationId));
+    @GetMapping("/{applicationId}/execute")
+    public ContainerResponse execute(@PathVariable Long applicationId) {
+        return ContainerResponse.from(service.execute(applicationId));
+    }
+
+    @Operation(summary = "Log an application")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logging an application"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
+    @GetMapping("/{applicationId}/log")
+    public ContainerLogResponse log(@PathVariable Long applicationId) throws InterruptedException {
+        return ContainerLogResponse.from(service.log(applicationId));
     }
 }

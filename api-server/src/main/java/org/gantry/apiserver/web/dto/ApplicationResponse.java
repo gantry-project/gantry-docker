@@ -8,13 +8,13 @@ import org.gantry.apiserver.domain.Application;
 @Builder
 @Getter
 @ToString
-public class ApplicationRequest {
+public class ApplicationResponse {
     private String title;
     private String image;
     private String containerId;
 
-    public static ApplicationRequest from(Application entity) {
-        return ApplicationRequest.builder()
+    public static ApplicationResponse from(Application entity) {
+        return ApplicationResponse.builder()
                 .title(entity.getTitle())
                 .image(entity.getImage())
                 .containerId(entity.getContainer().getId())

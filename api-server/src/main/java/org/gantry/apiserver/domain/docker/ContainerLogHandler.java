@@ -8,6 +8,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ContainerLogHandler extends TextWebSocketHandler {
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final DockerClientConnect dockerClientConnect;
+
+    public ContainerLogHandler(DockerClientConnect dockerClientConnect) {
+        this.dockerClientConnect = dockerClientConnect;
+  }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -28,12 +34,8 @@ public class ContainerLogHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.info("Log tailing will be started soon : %s".formatted(session.getId()));
         String containerId = message.getPayload();
-        while (true) {
-            String msg = session.getId() + ":" + containerId + ":" + Instant.now().toString();
-            System.out.println(msg);
-            session.sendMessage(new TextMessage(msg));
-            Thread.sleep(1000);
-        }
+        String logs = dockerClientConnect.log(message.getPayload());
+        session.sendMessage(new TextMessage(logs));
     }
 
     @Override

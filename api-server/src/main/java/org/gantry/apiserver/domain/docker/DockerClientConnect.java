@@ -32,7 +32,7 @@ public class DockerClientConnect {
     private final ContainerRepository containerRepository;
     private final PlatformRepository platformRepository;
 
-
+    private int lastLogTime;
     public DockerClientConnect(ContainerRepository containerRepository, PlatformRepository platformRepository, DockerClientFactory dockerClientFactory) {
         this.containerRepository = containerRepository;
         this.platformRepository = platformRepository;
@@ -40,9 +40,6 @@ public class DockerClientConnect {
         this.dockerClient = dockerClientFactory.getInstance();
         this.lastLogTime = (int)(System.currentTimeMillis()/1000);
     }
-
-    private int lastLogTime;
-
 
     @Transactional
     public String run(Application application) { // run = create + start
@@ -58,12 +55,13 @@ public class DockerClientConnect {
         return createContainer.getId();
     }
 
-    public List<String> log(String containerId) throws InterruptedException {
-        final List<String> logs = new ArrayList<>();
+    public String log(String containerId) throws InterruptedException {
+        StringBuffer logs = new StringBuffer();
         LogContainerResultCallback callBack = new LogContainerResultCallback() {
             @Override
             public void onNext(Frame item) {
-                logs.add(item.toString());
+                logs.append(item.toString());
+                logs.append("\n");
             }
         };
         dockerClient.logContainerCmd(containerId)
@@ -71,11 +69,11 @@ public class DockerClientConnect {
                 .withStdOut(true)
                 .withFollowStream(true)
                 .withTimestamps(true)
-                .withTail(20)
+                .withTail(50)
                 .exec(callBack).awaitStarted();
 
         callBack.awaitCompletion(1, TimeUnit.SECONDS);
-        return logs;
+        return logs.toString();
     }
 
     @Transactional
