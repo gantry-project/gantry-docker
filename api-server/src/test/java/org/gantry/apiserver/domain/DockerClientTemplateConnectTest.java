@@ -86,7 +86,8 @@ class DockerClientTemplateConnectTest {
         assertThat(containerId).isEqualTo("test001");
         verify(createCmd, times(1)).exec();
     }
-    @Test
+
+//    @Test
     void process() throws InterruptedException, IOException {
         dockerClientConnect.log(testContainer.getId());
     }

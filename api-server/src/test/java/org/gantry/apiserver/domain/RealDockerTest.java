@@ -32,15 +32,15 @@ public class RealDockerTest {
         applicationRepository.save(application);
 
     }
-    @Test
+
+//    @Test
     public void test(){
         dockerClientConnect.run(application);
     }
-    @Test
+
+//    @Test
     public void process() throws InterruptedException {
-        List<String> logs = dockerClientConnect.log("c34e");
-        for(String log : logs){
-            System.out.println(log);
-        }
+        String log = dockerClientConnect.log("c34e");
+        System.out.println(log);
     }
 }
