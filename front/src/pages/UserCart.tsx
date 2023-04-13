@@ -1,12 +1,10 @@
-// 유저가 임시적으로 저장하는 곳
-
 import React, { useCallback } from "react";
 import styled from "@emotion/styled";
-import { dummyData } from "../dummyData";
+
 import { useNavigate } from "react-router-dom";
 
 //components
-import DockerCat from "../components/ApplicationList/ApplicationCat";
+import ApplicationCat from "../components/ApplicationList/ApplicationCat";
 
 const UserCart = () => {
   const navigate = useNavigate();
@@ -23,7 +21,7 @@ const UserCart = () => {
         </TopWrapper>
         <BottmWrapper>
           <input placeholder="이름을 적어주세요" />
-          <DockerCat state={false} datas={dummyData} />
+          {/* <DockerCat  datas={dummyData} /> */}
         </BottmWrapper>
       </Wrapper>
     </Container>

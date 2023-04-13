@@ -13,9 +13,9 @@ change_directory() {
 }
 
 if [[ "$1" == "front" ]]; then
-  echo Starting frontend;
+  echo Starting front;
   change_directory;
-  exec ./run-frontend.sh
+  exec ./run-front.sh
 elif [[ "$1" == "api-server" ]]; then
   echo Startnig api-server;
   change_directory;

@@ -21,6 +21,8 @@ public class Container extends  BaseTimeEntity {
     @Transient
     @Enumerated(EnumType.STRING)
     private ContainerStatus status;
+    @Transient
+    private String log;
 
     public Container(String id, Application application) {
         this.id = id;
