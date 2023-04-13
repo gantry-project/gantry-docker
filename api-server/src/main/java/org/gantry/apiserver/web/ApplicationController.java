@@ -49,18 +49,8 @@ public class ApplicationController {
             @ApiResponse(responseCode = "200", description = "Launching an application"),
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
-    @GetMapping("/{applicationId}/execute")
+    @PostMapping("/{applicationId}/execute")
     public ContainerResponse execute(@PathVariable Long applicationId) {
         return ContainerResponse.from(service.execute(applicationId));
-    }
-
-    @Operation(summary = "Log an application")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Logging an application"),
-            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
-    })
-    @GetMapping("/{applicationId}/log")
-    public ContainerLogResponse log(@PathVariable Long applicationId) throws InterruptedException {
-        return ContainerLogResponse.from(service.log(applicationId));
     }
 }
