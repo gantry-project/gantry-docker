@@ -43,10 +43,11 @@ public class ContainerService {
         return docker.getStatus(containerId);
     }
 
-    public Container log(String containerId) throws InterruptedException {
-        String log = docker.log(containerId);
-        Container container = docker.getStatus(containerId);
-        container.setLog(log);
-        return container;
+    public String log(String containerId) {
+        try {
+            return docker.log(containerId);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
