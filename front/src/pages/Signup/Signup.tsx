@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from "config/config";
 
 interface UserProps {
   username: string;
@@ -21,7 +22,7 @@ const Signup = () => {
 
   async function postSignup(signupData: UserProps) {
     const res = await axios.post(
-      "http://localhost:8080/api/v1/users",
+      `${config.gantryApiUrl}/users`,
       signupData
     );
     return res;

@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 //component
 import MainMenu from "../components/HomeMenu/HomeMenu";
 
+
 const Home = () => {
   return (
     <>

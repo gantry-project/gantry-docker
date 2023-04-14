@@ -2,9 +2,10 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import config from "config/config";
 
 interface ServerApplication {
-  containerId: string;
+  id: string;
   title: string;
   image: string;
 }
@@ -26,7 +27,7 @@ const ApplicationCat: FC = () => {
   const navigate = useNavigate();
 
   async function getApplications() {
-    const res = await fetch("http://localhost:8080/api/v1/applications");
+    const res = await fetch(`${config.gantryApiUrl}/applications`);
     return res.json();
   }
 
@@ -34,11 +35,10 @@ const ApplicationCat: FC = () => {
     ["getApplications"],
     getApplications
   );
-  console.log("data", data);
   useEffect(() => {
     if (data) {
       const datas = data.map((i) => ({
-        id: i.containerId,
+        id: i.id,
         desc: i.image,
         title: i.title,
         img: "",
@@ -58,8 +58,7 @@ const ApplicationCat: FC = () => {
       <Container>
         {containers?.datas.map((item) => {
           return (
-            <>
-              <ItemWrapper onClick={() => onClickHandler(item.id)}>
+              <ItemWrapper key={item.id} onClick={() => onClickHandler(item.id)}>
                 <ImageWrapper>{item.img}</ImageWrapper>
                 <ItemBottom>
                   <ItemLogoWrapper>
@@ -71,7 +70,6 @@ const ApplicationCat: FC = () => {
                   </ItemBottomRight>
                 </ItemBottom>
               </ItemWrapper>
-            </>
           );
         })}
       </Container>

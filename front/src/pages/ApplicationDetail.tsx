@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import config from "config/config";
 
 const ApplicationDetail = () => {
   const [container, setContainer] = useState({});
@@ -11,7 +12,7 @@ const ApplicationDetail = () => {
 
   async function getApplication() {
     const res = await fetch(
-      `http://localhost:8080/api/v1/applications/${containerId}`
+      `${config.gantryApiUrl}/applications/${containerId}`
     );
     return res.json();
   }
@@ -22,7 +23,7 @@ const ApplicationDetail = () => {
   // const getContainers = async () => {
   //   try {
   //     const res = await axios.get(
-  //       "http://localhost:8080/api/v1/applications/9000001"
+  //       `${config.gantryApiUrl}/applications/9000001`
   //     );
   //     console.log("rescontainer", res); // 값이 없음
   //   } catch (err) {
