@@ -2,10 +2,11 @@ package org.gantry.apiserver.web;
 
 import org.gantry.apiserver.exception.NoSuchApplicationException;
 import org.gantry.apiserver.exception.NoSuchContainerException;
+import org.gantry.apiserver.exception.UserNotFoundException;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.http.*;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -39,13 +40,25 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
               .build();
    }
 
-   @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+   @ExceptionHandler(value = UserNotFoundException.class)
    @ResponseStatus(BAD_REQUEST)
-   public ErrorResponse handleException(Exception e, ServletWebRequest req) {
+   @ResponseBody
+   public ErrorResponse handler(UserNotFoundException e, ServletWebRequest req) {
+      return ErrorResponse.builder()
+              .status(NOT_FOUND)
+              .uri(req.getRequest().getRequestURI())
+              .message("User not found")
+              .detail(e.getMessage())
+              .build();
+   }
+
+   @ExceptionHandler(value = Exception.class)
+   @ResponseStatus(BAD_REQUEST)
+   public ErrorResponse handler(Exception e, ServletWebRequest req) {
       return ErrorResponse.builder()
               .status(BAD_REQUEST)
               .uri(req.getRequest().getRequestURI())
-              .message(e.getMessage())
+              .message(BAD_REQUEST.getReasonPhrase())
               .detail(e.getMessage())
               .build();
    }
