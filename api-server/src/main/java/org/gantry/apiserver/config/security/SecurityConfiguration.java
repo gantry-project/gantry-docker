@@ -50,7 +50,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -105,7 +105,7 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/health")
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/health", "/ws/**")
                 .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -128,7 +128,12 @@ public class SecurityConfiguration {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                 .requestMatchers("/api/v1/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/applications").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/applications/*").permitAll()
+                .requestMatchers("/api/v1/platforms").hasAnyRole("ADMIN")
+                .requestMatchers("/api/v1/platforms/**").hasAnyRole("ADMIN")
                 .requestMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/health").permitAll()
                 .anyRequest().authenticated()

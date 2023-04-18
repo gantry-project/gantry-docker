@@ -25,14 +25,13 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         return repository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("%s is not found.".formatted(username)));
+                        () -> new UsernameNotFoundException("%d is not found.".formatted(username)));
     }
 
     public User findById(Long userId) {
-        return repository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("%d is not found.".formatted(userId)));
+        return repository.findById(userId).orElseThrow(UserNotFoundException.with(userId));
     }
 
     @Transactional

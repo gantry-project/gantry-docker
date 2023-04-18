@@ -2,32 +2,33 @@ package org.gantry.apiserver.domain;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.*;
+import org.gantry.apiserver.domain.docker.DockerClientConnect;
+import org.gantry.apiserver.domain.docker.DockerClientFactory;
 import org.gantry.apiserver.persistence.ApplicationRepository;
 import org.gantry.apiserver.persistence.ContainerRepository;
-import org.junit.jupiter.api.*;
+import org.gantry.apiserver.persistence.PlatformRepository;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.gantry.apiserver.domain.ContainerStatus.*;
+import static org.gantry.apiserver.domain.ContainerStatus.RUNNING;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@Import(DockerClientConnect.class)
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
-class DockerClientConnectTest {
-    @InjectMocks
-    @Autowired
+class DockerClientTemplateConnectTest {
     private DockerClientConnect dockerClientConnect;
 
     @Mock
@@ -35,6 +36,9 @@ class DockerClientConnectTest {
 
     @Autowired
     private ContainerRepository containerRepository;
+
+    @Autowired
+    private PlatformRepository platformRepository;
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -64,6 +68,10 @@ class DockerClientConnectTest {
     void saveApplication(){
         testApplication = applicationRepository.save(testApplication);
         applicationId = testApplication.getId();
+
+        DockerClientFactory factory = mock(DockerClientFactory.class);
+        given(factory.getInstance()).willReturn(client);
+        dockerClientConnect = new DockerClientConnect(containerRepository, platformRepository, factory);
     }
 
     @Test
@@ -77,6 +85,11 @@ class DockerClientConnectTest {
         
         assertThat(containerId).isEqualTo("test001");
         verify(createCmd, times(1)).exec();
+    }
+
+//    @Test
+    void process() throws InterruptedException, IOException {
+        dockerClientConnect.log(testContainer.getId());
     }
 
     @Test

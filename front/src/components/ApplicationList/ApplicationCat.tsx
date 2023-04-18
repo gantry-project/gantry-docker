@@ -1,6 +1,13 @@
-import React, { FC, useCallback, useState, useEffect } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
+interface ServerApplication {
+  containerId: string;
+  title: string;
+  image: string;
+}
 
 //compoments
 interface Containers {
@@ -12,38 +19,37 @@ interface Containers {
     logo: string;
   }[];
 }
-interface Props {
-  datas: {
-    id: string;
-    title: string;
-    img: string;
-    desc: string;
-    logo: string;
-  }[];
 
-  state: boolean;
-}
-
-const ApplicationCat: FC<Props> = ({ datas, state }) => {
-  const [isHovered, setIsHovered] = useState(state);
+const ApplicationCat: FC = () => {
+  // const [isHovered, setIsHovered] = useState();
   const [containers, setContainers] = useState<Containers>();
+  const navigate = useNavigate();
 
-  /**유저가 고른 데이터 */
+  async function getApplications() {
+    const res = await fetch("http://localhost:8080/api/v1/applications");
+    return res.json();
+  }
+
+  const { data } = useQuery<ServerApplication[]>(
+    ["getApplications"],
+    getApplications
+  );
+  console.log("data", data);
   useEffect(() => {
-    const getContainers = async () => {
-      try {
-        const res = await axios.get("http://localhost:8080/applications");
-        console.log("res", res); // 값이 없음
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getContainers();
-  }, []);
+    if (data) {
+      const datas = data.map((i) => ({
+        id: i.containerId,
+        desc: i.image,
+        title: i.title,
+        img: "",
+        logo: "",
+      }));
+      setContainers({ datas });
+    }
+  }, [data]);
 
-  const onClickHandler = useCallback((title: string, item: string) => {
-    console.log("title", title);
-    console.log("item", item);
+  const onClickHandler = useCallback((id: string) => {
+    navigate(`/applicationDetail/${id}`);
   }, []);
 
   return (
@@ -53,7 +59,7 @@ const ApplicationCat: FC<Props> = ({ datas, state }) => {
         {containers?.datas.map((item) => {
           return (
             <>
-              <ItemWrapper>
+              <ItemWrapper onClick={() => onClickHandler(item.id)}>
                 <ImageWrapper>{item.img}</ImageWrapper>
                 <ItemBottom>
                   <ItemLogoWrapper>

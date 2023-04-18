@@ -6,7 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.gantry.apiserver.domain.Container;
 import org.gantry.apiserver.service.ContainerService;
-import org.gantry.apiserver.web.dto.ContainerRequest;
+import org.gantry.apiserver.web.dto.ContainerLogResponse;
+import org.gantry.apiserver.web.dto.ContainerResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @GetMapping
-    public List<ContainerRequest> list() {
+    public List<ContainerResponse> list() {
         return service.findAll().stream()
-                .map(ContainerRequest::from)
+                .map(ContainerResponse::from)
                 .toList();
     }
 
@@ -37,9 +38,9 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @GetMapping("/{containerId}")
-    public ContainerRequest get(@PathVariable String containerId) {
+    public ContainerResponse get(@PathVariable String containerId) {
         Container container = service.findById(containerId);
-        return ContainerRequest.from(container);
+        return ContainerResponse.from(container);
     }
 
     @Operation(summary = "Restart a container")
@@ -49,9 +50,9 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @PostMapping("/{containerId}/restart")
-    public ContainerRequest restart(@PathVariable String containerId) {
+    public ContainerResponse restart(@PathVariable String containerId) {
         Container container = service.restart(containerId);
-        return ContainerRequest.from(container);
+        return ContainerResponse.from(container);
     }
 
     @Operation(summary = "Stop a container")
@@ -61,9 +62,9 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @PostMapping("/{containerId}/stop")
-    public ContainerRequest stop(@PathVariable String containerId) {
+    public ContainerResponse stop(@PathVariable String containerId) {
         Container container = service.stop(containerId);
-        return ContainerRequest.from(container);
+        return ContainerResponse.from(container);
     }
 
     @Operation(summary = "Remove a container")
@@ -73,8 +74,18 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @PostMapping("/{containerId}/remove")
-    public ContainerRequest remove(@PathVariable String containerId) {
+    public ContainerResponse remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
-        return ContainerRequest.from(container);
+        return ContainerResponse.from(container);
+    }
+
+    @Operation(summary = "Log an application")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logging an application"),
+            @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
+    })
+    @GetMapping("/{containerId}/log")
+    public ContainerLogResponse log(@PathVariable String containerId) throws InterruptedException {
+        return ContainerLogResponse.from(service.log(containerId));
     }
 }
