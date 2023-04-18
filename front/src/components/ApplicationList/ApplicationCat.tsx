@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import applicationApi from "../../api/application";
 
 interface ServerApplication {
   containerId: string;
@@ -9,7 +10,6 @@ interface ServerApplication {
   image: string;
 }
 
-//compoments
 interface Containers {
   datas: {
     id: string;
@@ -25,14 +25,9 @@ const ApplicationCat: FC = () => {
   const [containers, setContainers] = useState<Containers>();
   const navigate = useNavigate();
 
-  async function getApplications() {
-    const res = await fetch("http://localhost:8080/api/v1/applications");
-    return res.json();
-  }
-
   const { data } = useQuery<ServerApplication[]>(
     ["getApplications"],
-    getApplications
+    applicationApi.getApplication
   );
   console.log("data", data);
   useEffect(() => {

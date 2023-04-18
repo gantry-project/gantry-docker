@@ -3,13 +3,15 @@ import styled from "@emotion/styled";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import userApi from "../../api/user";
+import { UserProps } from "../../types/userType";
 
-interface UserProps {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+// export interface UserProps {
+//   username: string;
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+// }
 
 const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,20 +21,20 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
 
-  async function postSignup(signupData: UserProps) {
-    const res = await axios.post(
-      "http://localhost:8080/api/v1/users",
-      signupData
-    );
-    return res;
-  }
+  // async function postSignup(signupData: UserProps) {
+  //   const res = await axios.post(
+  //     "http://localhost:8080/api/v1/users",
+  //     signupData
+  //   );
+  //   return res;
+  // }
 
   const postMutation = useMutation(
-    (signupData: UserProps) => postSignup(signupData),
+    (signupData: UserProps) => userApi.postRegister(signupData),
     {
       onSuccess: (data) => {
         console.log("Server response:", data);
-        navigate("/");
+        navigate("/login");
       },
     }
   );
