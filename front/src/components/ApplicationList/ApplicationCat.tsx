@@ -4,61 +4,69 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import config from "config/config";
 
-interface ServerApplication {
-  id: string;
+
+interface ApplicationDto {
+  id: number;
   title: string;
   image: string;
 }
 
-//compoments
-interface Containers {
-  datas: {
-    id: string;
-    title: string;
-    img: string;
-    desc: string;
-    logo: string;
-  }[];
+interface Application {
+  id: string;
+  title: string;
+  img: string;
+  desc: string;
+  logo: string;
 }
 
 const ApplicationCat: FC = () => {
-  // const [isHovered, setIsHovered] = useState();
-  const [containers, setContainers] = useState<Containers>();
+  const [applications, setApplications] = useState<Application[]>([] as Application[]);
   const navigate = useNavigate();
 
   async function getApplications() {
-    const res = await fetch(`${config.gantryApiUrl}/applications`);
-    return res.json();
+    const response = await fetch(`${config.gantryApiUrl}/applications`)
+    if (!response.ok) {
+      console.warn(response);
+      return;
+    }
+
+    return response.json();
   }
 
-  const { data } = useQuery<ServerApplication[]>(
+  const {data} = useQuery<ApplicationDto[]>(
     ["getApplications"],
     getApplications
   );
+
   useEffect(() => {
-    if (data) {
-      const datas = data.map((i) => ({
-        id: i.id,
-        desc: i.image,
-        title: i.title,
-        img: "",
-        logo: "",
-      }));
-      setContainers({ datas });
-    }
+    if (!data) return;
+
+    console.log(data)
+    setApplications(data.map(dto => ({
+      id: dto.id.toString(),
+      desc: dto.image,
+      title: dto.title,
+      img: "",
+      logo: "",
+    })));
   }, [data]);
 
-  const onClickHandler = useCallback((id: string) => {
-    navigate(`/applicationDetail/${id}`);
+  const onClickHandler = useCallback((applicationId: string) => {
+    navigate(`/applicationDetail/${applicationId}`);
   }, []);
 
   return (
     <>
       <Category>database</Category>
       <Container>
-        {containers?.datas.map((item) => {
-          return (
-              <ItemWrapper key={item.id} onClick={() => onClickHandler(item.id)}>
+        {applications.length == 0
+          ? <MessageBox>
+              <MessageItem>
+                Empty Applications
+              </MessageItem>
+            </MessageBox>
+          : applications.map(item => {
+              return <ItemWrapper key={item.id} onClick={() => onClickHandler(item.id)}>
                 <ImageWrapper>{item.img}</ImageWrapper>
                 <ItemBottom>
                   <ItemLogoWrapper>
@@ -70,8 +78,8 @@ const ApplicationCat: FC = () => {
                   </ItemBottomRight>
                 </ItemBottom>
               </ItemWrapper>
-          );
-        })}
+          })
+        }
       </Container>
     </>
   );
@@ -92,6 +100,17 @@ const Category = styled.h1`
   text-align: center;
   border-radius: 20px;
 `;
+
+const MessageBox = styled.div`
+  width: 100%;
+  height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const MessageItem = styled.h1`
+  font-weight: bold;
+`
 
 const ItemWrapper = styled.div`
   width: 240px;

@@ -25,7 +25,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/applicationsList" element={<ApplicationsList />} />
           <Route
-            path="/applicationDetail/:containerId"
+            path="/applicationDetail/:applicationId"
             element={<ApplicationDetail />}
           />
 

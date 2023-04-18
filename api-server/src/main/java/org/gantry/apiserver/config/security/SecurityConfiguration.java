@@ -1,6 +1,8 @@
 package org.gantry.apiserver.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
 @Profile("!simple-security")
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
@@ -67,8 +70,9 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
         return (request, response, exception) -> {
-            exception.printStackTrace();
+            log.info(exception.getMessage());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             OutputStream responseStream = response.getOutputStream();
             objectMapper.writeValue(responseStream, ErrorResponse.builder()
@@ -84,8 +88,9 @@ public class SecurityConfiguration {
     @Bean
     public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
         return (request, response, exception) -> {
-            exception.printStackTrace();
+            log.info(exception.getMessage());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
             OutputStream responseStream = response.getOutputStream();
             objectMapper.writeValue(responseStream, ErrorResponse.builder()

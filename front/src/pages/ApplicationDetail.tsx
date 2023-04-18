@@ -1,36 +1,83 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "@emotion/styled";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import {useNavigate, useParams} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
 import config from "config/config";
 
+interface ApplicationDto {
+  id: number;
+  title: string;
+  image: string;
+}
+
+interface Application {
+  id: string;
+  title: string;
+  img: string;
+  desc: string;
+  logo: string;
+}
+
+interface Error {
+  status: string;
+  uri: string;
+  message: string;
+  detail: string;
+}
+
 const ApplicationDetail = () => {
-  const [container, setContainer] = useState({});
-  const { containerId } = useParams<{ containerId: string }>();
-  console.log("id", containerId);
+  const [application, setApplication] = useState<Application>({} as Application);
+  const { applicationId } = useParams<{ applicationId: string }>();
+  const navigate = useNavigate();
 
   async function getApplication() {
-    const res = await fetch(
-      `${config.gantryApiUrl}/applications/${containerId}`
+    const response = await fetch(
+      `${config.gantryApiUrl}/applications/${applicationId}`
     );
-    return res.json();
+
+    if (!response.ok) {
+      console.warn(response);
+      return;
+    }
+
+    return response.json();
   }
 
-  const { data } = useQuery(["getApplication"], getApplication);
-  console.log("data!!!", data);
+  const { data } = useQuery<ApplicationDto>(["getApplication"], getApplication);
 
-  // const getContainers = async () => {
-  //   try {
-  //     const res = await axios.get(
-  //       `${config.gantryApiUrl}/applications/9000001`
-  //     );
-  //     console.log("rescontainer", res); // 값이 없음
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-  // getContainers();
+
+  useEffect(() => {
+    if (!data) return;
+
+    console.log(data)
+    setApplication({
+      id: data.id.toString(),
+      desc: data.image,
+      title: data.title,
+      img: "",
+      logo: "",
+    });
+  }, [data]);
+
+  const launchApplication = async () => {
+    const response = await fetch(
+      `${config.gantryApiUrl}/applications/${applicationId}`, {
+        method: 'POST',
+        headers: {},
+        body: JSON.stringify({})
+      }
+    );
+
+    if (!response.ok) {
+      console.warn(response);
+      const error = await response.json() as Error;
+      alert(error.message);
+      return;
+    }
+
+    navigate(`/applicationsList`);
+  }
+
   return (
     <Container>
       <DetailItemsContainer>
@@ -40,10 +87,10 @@ const ApplicationDetail = () => {
           </RightContainer>
           <LeftWrapper>
             <TopItem>
-              <Title>Rstudio</Title>
-              <LaunchBtn>LAUNCH</LaunchBtn>
+              <Title>{application.title}</Title>
+              <LaunchBtn onClick={() => launchApplication()} >LAUNCH</LaunchBtn>
             </TopItem>
-            <BottomItem>설명</BottomItem>
+            <BottomItem>{application.desc}</BottomItem>
           </LeftWrapper>
         </DetailContainer>
         <SnapchatWrapper>
