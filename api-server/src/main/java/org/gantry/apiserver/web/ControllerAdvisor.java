@@ -5,6 +5,7 @@ import org.gantry.apiserver.exception.NoSuchContainerException;
 import org.gantry.apiserver.exception.UserNotFoundException;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,8 +14,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -52,6 +52,17 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
               .build();
    }
 
+   @ExceptionHandler(value = AccessDeniedException.class)
+   @ResponseStatus(FORBIDDEN)
+   public ErrorResponse handler(AccessDeniedException e, ServletWebRequest req) {
+      return ErrorResponse.builder()
+              .status(FORBIDDEN)
+              .uri(req.getRequest().getRequestURI())
+              .message(FORBIDDEN.getReasonPhrase())
+              .detail(e.getMessage())
+              .build();
+   }
+
    @ExceptionHandler(value = Exception.class)
    @ResponseStatus(BAD_REQUEST)
    public ErrorResponse handler(Exception e, ServletWebRequest req) {
@@ -67,7 +78,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
    @Override
    protected ResponseEntity<Object> createResponseEntity(Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
       ErrorResponse.ErrorResponseBuilder errorResponse = ErrorResponse.builder()
-              .status(statusCode);
+              .status(HttpStatus.valueOf(statusCode.value()));
 
       if (body instanceof ProblemDetail problem) {
          String uri = problem.getInstance() == null
