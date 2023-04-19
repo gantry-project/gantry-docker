@@ -32,5 +32,7 @@ COPY --from=builder /gantry-docker/bin /gantry-docker/bin
 EXPOSE 3000/tcp
 EXPOSE 8080/tcp
 
+ENV PATH=${PATH}:/gantry-docker/node/bin
+
 ENTRYPOINT ["bin/start.sh"]
 CMD ["api-server"]
