@@ -22,9 +22,9 @@ public enum ContainerStatus {
 
     public static ContainerStatus of(String status){
         return Arrays.stream(ContainerStatus.values())
-                .filter(s -> s.getTitle().equals(status))
+                .filter(s -> s.getTitle().equals(status.toUpperCase()))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(UNKNOWN);
     }
 
 }

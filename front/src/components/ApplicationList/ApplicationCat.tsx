@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import styled from "@emotion/styled";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
@@ -24,7 +24,7 @@ const ApplicationCat = () => {
   const [applications, setApplications] = useState<Application[]>([] as Application[]);
   const navigate = useNavigate();
 
-  const convertToApplication = (dto: ApplicationDto): Application => {
+  const convertToApplication = useCallback((dto: ApplicationDto): Application => {
     return {
       id: dto.id.toString(),
       desc: dto.image,
@@ -32,10 +32,14 @@ const ApplicationCat = () => {
       img: "",
       logo: "",
     }
-  }
+  }, []);
+
+  const onClickHandler = useCallback((applicationId: string) => {
+    navigate(`/applicationDetail/${applicationId}`);
+  }, []);
 
   const MessageDiv = (props: { message: String, condition?: () => boolean }) => {
-    if (props.condition && !props.condition()) return <></>;
+    if (props.condition && !props.condition()) return null;
 
     return <MessageBox>
       <MessageItem>
@@ -45,7 +49,7 @@ const ApplicationCat = () => {
   }
 
   const ApplicationDivs = (props: {applications: Application[]}) => {
-    if (props.applications.length == 0) return <></>;
+    if (props.applications.length == 0) return null;
     return <>
       {props.applications.map(app => (
         <ItemWrapper key={app.id} onClick={() => onClickHandler(app.id)}>
@@ -75,24 +79,14 @@ const ApplicationCat = () => {
   );
 
   if (isLoading) {
-    console.warn("Loading");
     return <MessageDiv message={"Loading..."}/>;
   }
   else if (isFetching) {
-    console.warn("Updating");
     return <MessageDiv message={"Updating..."} />;
   }
   else if (error) {
-    console.warn("error");
     return <MessageDiv message={"An error has occurred: " + error.toString()} />;
   }
-  else {
-    console.warn("nothing")
-  }
-
-  const onClickHandler = (applicationId: string) => {
-    navigate(`/applicationDetail/${applicationId}`);
-  };
 
   return (
     <>

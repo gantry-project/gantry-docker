@@ -1,20 +1,40 @@
-import React, { useCallback } from "react";
+import React, {FC, useCallback} from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {useAuthUser, useAuthUserMutation} from "../api/user";
 
-const Modal = () => {
+const Modal: FC<{setModalState: (state:boolean) => void}> = ({setModalState}) => {
   const navigate = useNavigate();
-  const onClickHandler = useCallback(() => {
+  const {logout} = useAuthUserMutation();
+  const authUser = useAuthUser();
+
+  const onMyPageClickHandler = useCallback(() => {
+    navigate(`/user`);
+  }, []);
+
+  const onMyContainerClickHandler = useCallback(() => {
     navigate(`/user/container`);
   }, []);
+
+  const onLogoutClickHandler = useCallback(() => {
+    logout();
+    setModalState(false);
+    navigate(`/`);
+  }, []);
+
+
+  if (!authUser) {
+    return null;
+  }
+
   return (
     <Container>
       <UserInfo>
-        <UserNmae>로그인 이름</UserNmae>
-        <UserLi>마이페이지</UserLi>
-        <UserLi onClick={onClickHandler}>나의 컨테이너</UserLi>
+        <UserName>{authUser?.username}</UserName>
+        <UserLi onClick={onMyPageClickHandler}>마이페이지</UserLi>
+        <UserLi onClick={onMyContainerClickHandler}>나의 컨테이너</UserLi>
       </UserInfo>
-      <UserLogout>로그아웃</UserLogout>
+      <UserLogout onClick={onLogoutClickHandler}>로그아웃</UserLogout>
     </Container>
   );
 };
@@ -40,7 +60,7 @@ const UserInfo = styled.ul`
   height: 80%;
   background-color: white;
 `;
-const UserNmae = styled.li`
+const UserName = styled.li`
   padding-bottom: 18px;
   padding-top: 10px;
   border-bottom: 1px solid black;
