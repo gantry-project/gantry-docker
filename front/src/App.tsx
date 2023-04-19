@@ -12,8 +12,9 @@ import UserContainer from "./pages/UserContainer";
 // 보류
 import UserCart from "./pages/UserCart";
 import UserProfie from "./pages/User";
+
 import Signup from "./pages/user/Signup";
-import LogIn from "./pages/user/login";
+import LogIn from "./pages/user/LogIn";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/user" element={<UserProfie />}></Route>
           <Route path="/user/container" element={<UserContainer />} />
           <Route path="/userAppCart" element={<UserCart />} />
+          <Route path="/login" element={<LogIn />} />
         </Routes>
       </Layout>
       <ReactQueryDevtools />
