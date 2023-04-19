@@ -1,79 +1,105 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, {useState} from "react";
 import styled from "@emotion/styled";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import {useNavigate} from "react-router-dom";
+import config from "config/config";
+import axios from "axios";
 
-interface ServerApplication {
-  containerId: string;
+
+interface ApplicationDto {
+  id: number;
   title: string;
   image: string;
 }
 
-//compoments
-interface Containers {
-  datas: {
-    id: string;
-    title: string;
-    img: string;
-    desc: string;
-    logo: string;
-  }[];
+interface Application {
+  id: string;
+  title: string;
+  img: string;
+  desc: string;
+  logo: string;
 }
 
-const ApplicationCat: FC = () => {
-  // const [isHovered, setIsHovered] = useState();
-  const [containers, setContainers] = useState<Containers>();
+const ApplicationCat = () => {
+  const [applications, setApplications] = useState<Application[]>([] as Application[]);
   const navigate = useNavigate();
 
-  async function getApplications() {
-    const res = await fetch("http://localhost:8080/api/v1/applications");
-    return res.json();
+  const convertToApplication = (dto: ApplicationDto): Application => {
+    return {
+      id: dto.id.toString(),
+      desc: dto.image,
+      title: dto.title,
+      img: "",
+      logo: "",
+    }
   }
 
-  const { data } = useQuery<ServerApplication[]>(
-    ["getApplications"],
-    getApplications
-  );
-  console.log("data", data);
-  useEffect(() => {
-    if (data) {
-      const datas = data.map((i) => ({
-        id: i.containerId,
-        desc: i.image,
-        title: i.title,
-        img: "",
-        logo: "",
-      }));
-      setContainers({ datas });
-    }
-  }, [data]);
+  const MessageDiv = (props: { message: String, condition?: () => boolean }) => {
+    if (props.condition && !props.condition()) return <></>;
 
-  const onClickHandler = useCallback((id: string) => {
-    navigate(`/applicationDetail/${id}`);
-  }, []);
+    return <MessageBox>
+      <MessageItem>
+        {props.message}
+      </MessageItem>
+    </MessageBox>
+  }
+
+  const ApplicationDivs = (props: {applications: Application[]}) => {
+    if (props.applications.length == 0) return <></>;
+    return <>
+      {props.applications.map(app => (
+        <ItemWrapper key={app.id} onClick={() => onClickHandler(app.id)}>
+          <ImageWrapper>{app.img}</ImageWrapper>
+          <ItemBottom>
+            <ItemLogoWrapper>
+              <Logo>LO</Logo>
+            </ItemLogoWrapper>
+            <ItemBottomRight>
+              <ItemTitle>{app.title}</ItemTitle>
+              <ItemDesc>{app.desc}</ItemDesc>
+            </ItemBottomRight>
+          </ItemBottom>
+        </ItemWrapper>
+      ))}
+    </>
+  }
+
+  const {isLoading, isFetching, error} = useQuery<ApplicationDto[], Error, ApplicationDto[]>(
+    ["getApplications"],
+    () =>
+      axios.get(`${config.gantryApiUrl}/applications`)
+        .then((res) => res.data),
+    {
+      onSuccess: (data) => setApplications(data.map(dto => convertToApplication(dto)))
+    }
+  );
+
+  if (isLoading) {
+    console.warn("Loading");
+    return <MessageDiv message={"Loading..."}/>;
+  }
+  else if (isFetching) {
+    console.warn("Updating");
+    return <MessageDiv message={"Updating..."} />;
+  }
+  else if (error) {
+    console.warn("error");
+    return <MessageDiv message={"An error has occurred: " + error.toString()} />;
+  }
+  else {
+    console.warn("nothing")
+  }
+
+  const onClickHandler = (applicationId: string) => {
+    navigate(`/applicationDetail/${applicationId}`);
+  };
 
   return (
     <>
       <Category>database</Category>
       <Container>
-        {containers?.datas.map((item) => {
-          return (
-            <>
-              <ItemWrapper onClick={() => onClickHandler(item.id)}>
-                <ImageWrapper>{item.img}</ImageWrapper>
-                <ItemBottom>
-                  <ItemLogoWrapper>
-                    <Logo>LO</Logo>
-                  </ItemLogoWrapper>
-                  <ItemBottomRight>
-                    <ItemTitle>{item.title}</ItemTitle>
-                    <ItemDesc>{item.desc}</ItemDesc>
-                  </ItemBottomRight>
-                </ItemBottom>
-              </ItemWrapper>
-            </>
-          );
-        })}
+        <MessageDiv message={"Empty applications"} condition={() => applications.length == 0} />
+        <ApplicationDivs applications={applications} />
       </Container>
     </>
   );
@@ -94,6 +120,17 @@ const Category = styled.h1`
   text-align: center;
   border-radius: 20px;
 `;
+
+const MessageBox = styled.div`
+  width: 100%;
+  height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const MessageItem = styled.h1`
+  font-weight: bold;
+`
 
 const ItemWrapper = styled.div`
   width: 240px;

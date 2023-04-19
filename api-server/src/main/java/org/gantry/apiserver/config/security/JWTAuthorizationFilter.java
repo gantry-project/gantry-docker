@@ -5,7 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.gantry.apiserver.domain.Authority;
 import org.gantry.apiserver.domain.User;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.http.MediaType;
@@ -19,11 +18,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.gantry.apiserver.config.security.JWTProperties.AUTHZ_HEADER;
 import static org.gantry.apiserver.config.security.JWTProperties.BEARER_PREFIX;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
