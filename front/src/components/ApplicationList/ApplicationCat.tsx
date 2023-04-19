@@ -1,8 +1,9 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import styled from "@emotion/styled";
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import {useNavigate} from "react-router-dom";
 import config from "config/config";
+import axios from "axios";
 
 
 interface ApplicationDto {
@@ -19,67 +20,86 @@ interface Application {
   logo: string;
 }
 
-const ApplicationCat: FC = () => {
+const ApplicationCat = () => {
   const [applications, setApplications] = useState<Application[]>([] as Application[]);
   const navigate = useNavigate();
 
-  async function getApplications() {
-    const response = await fetch(`${config.gantryApiUrl}/applications`)
-    if (!response.ok) {
-      console.warn(response);
-      return;
-    }
-
-    return response.json();
-  }
-
-  const {data} = useQuery<ApplicationDto[]>(
-    ["getApplications"],
-    getApplications
-  );
-
-  useEffect(() => {
-    if (!data) return;
-
-    console.log(data)
-    setApplications(data.map(dto => ({
+  const convertToApplication = (dto: ApplicationDto): Application => {
+    return {
       id: dto.id.toString(),
       desc: dto.image,
       title: dto.title,
       img: "",
       logo: "",
-    })));
-  }, [data]);
+    }
+  }
 
-  const onClickHandler = useCallback((applicationId: string) => {
+  const MessageDiv = (props: { message: String, condition?: () => boolean }) => {
+    if (props.condition && !props.condition()) return <></>;
+
+    return <MessageBox>
+      <MessageItem>
+        {props.message}
+      </MessageItem>
+    </MessageBox>
+  }
+
+  const ApplicationDivs = (props: {applications: Application[]}) => {
+    if (props.applications.length == 0) return <></>;
+    return <>
+      {props.applications.map(app => (
+        <ItemWrapper key={app.id} onClick={() => onClickHandler(app.id)}>
+          <ImageWrapper>{app.img}</ImageWrapper>
+          <ItemBottom>
+            <ItemLogoWrapper>
+              <Logo>LO</Logo>
+            </ItemLogoWrapper>
+            <ItemBottomRight>
+              <ItemTitle>{app.title}</ItemTitle>
+              <ItemDesc>{app.desc}</ItemDesc>
+            </ItemBottomRight>
+          </ItemBottom>
+        </ItemWrapper>
+      ))}
+    </>
+  }
+
+  const {isLoading, isFetching, error} = useQuery<ApplicationDto[], Error, ApplicationDto[]>(
+    ["getApplications"],
+    () =>
+      axios.get(`${config.gantryApiUrl}/applications`)
+        .then((res) => res.data),
+    {
+      onSuccess: (data) => setApplications(data.map(dto => convertToApplication(dto)))
+    }
+  );
+
+  if (isLoading) {
+    console.warn("Loading");
+    return <MessageDiv message={"Loading..."}/>;
+  }
+  else if (isFetching) {
+    console.warn("Updating");
+    return <MessageDiv message={"Updating..."} />;
+  }
+  else if (error) {
+    console.warn("error");
+    return <MessageDiv message={"An error has occurred: " + error.toString()} />;
+  }
+  else {
+    console.warn("nothing")
+  }
+
+  const onClickHandler = (applicationId: string) => {
     navigate(`/applicationDetail/${applicationId}`);
-  }, []);
+  };
 
   return (
     <>
       <Category>database</Category>
       <Container>
-        {applications.length == 0
-          ? <MessageBox>
-              <MessageItem>
-                Empty Applications
-              </MessageItem>
-            </MessageBox>
-          : applications.map(item => {
-              return <ItemWrapper key={item.id} onClick={() => onClickHandler(item.id)}>
-                <ImageWrapper>{item.img}</ImageWrapper>
-                <ItemBottom>
-                  <ItemLogoWrapper>
-                    <Logo>LO</Logo>
-                  </ItemLogoWrapper>
-                  <ItemBottomRight>
-                    <ItemTitle>{item.title}</ItemTitle>
-                    <ItemDesc>{item.desc}</ItemDesc>
-                  </ItemBottomRight>
-                </ItemBottom>
-              </ItemWrapper>
-          })
-        }
+        <MessageDiv message={"Empty applications"} condition={() => applications.length == 0} />
+        <ApplicationDivs applications={applications} />
       </Container>
     </>
   );

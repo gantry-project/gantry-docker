@@ -3,7 +3,11 @@ import styled from "@emotion/styled";
 
 const UserLogin = () => {
 
-    return (
+  const onClickLoginButton = () => {
+
+  }
+
+  return (
         <Form>
             <Label>이메일</Label>
             <br />
@@ -14,7 +18,7 @@ const UserLogin = () => {
             <PasswordInput type="password" placeholder="비밀번호를 입력해주세요." />
             <br />
             <JoinButton>회원가입</JoinButton>
-            <LoginButton type="submit">로그인</LoginButton>
+            <LoginButton onClick={onClickLoginButton}>로그인</LoginButton>
         </Form>
     );
 };
