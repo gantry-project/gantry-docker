@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "@emotion/styled";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
