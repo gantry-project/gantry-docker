@@ -12,7 +12,8 @@ import UserContainer from "./pages/UserContainer";
 // 보류
 import UserCart from "./pages/UserCart";
 import UserProfie from "./pages/User";
-import Signup from "./pages/Signup/Signup";
+import Signup from "./pages/user/Signup";
+import LogIn from "./pages/user/login";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<LogIn />} />
           <Route path="/applicationsList" element={<ApplicationsList />} />
           <Route
             path="/applicationDetail/:containerId"
