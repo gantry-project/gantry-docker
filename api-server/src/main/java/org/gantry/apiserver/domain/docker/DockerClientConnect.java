@@ -124,9 +124,11 @@ public class DockerClientConnect {
     public Container getStatus(String containerId) {
         Container findContainer = containerRepository.findById(containerId).orElseThrow(NotFoundException::new);
         List<com.github.dockerjava.api.model.Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
-        com.github.dockerjava.api.model.Container dockerContainer = containers.stream().filter(container -> container.getId().equals(containers)).findFirst().orElseThrow();
+        com.github.dockerjava.api.model.Container dockerContainer = containers.stream()
+                .filter(container -> container.getId().equals(containerId))
+                .findFirst().orElseThrow();
 
-        findContainer.setStatus(of(dockerContainer.getStatus()));
+        findContainer.setStatus(of(dockerContainer.getState()));
         return findContainer;
     }
 

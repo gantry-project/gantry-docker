@@ -55,6 +55,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
    @ExceptionHandler(value = Exception.class)
    @ResponseStatus(BAD_REQUEST)
    public ErrorResponse handler(Exception e, ServletWebRequest req) {
+      e.printStackTrace();
       return ErrorResponse.builder()
               .status(BAD_REQUEST)
               .uri(req.getRequest().getRequestURI())
