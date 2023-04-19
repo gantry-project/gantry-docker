@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
 
     private void throwIfUserNotExist(long userId) {
         if (!repository.existsById(userId)) {
-            throw new UserNotFoundException("%d is not found.".formatted(userId));
+            throw new UserNotFoundException(userId, "%d is not found.".formatted(userId));
         }
     }
 

@@ -10,7 +10,7 @@ import { FaCartPlus } from "react-icons/fa";
 import Modal from "./Modal";
 
 const Navbar = () => {
-  const [loginstate, setLoginState] = useState(true);
+  const [loginstate, setLoginstate] = useState(false);
   const [modalstate, setModalstate] = useState(false);
   const navigate = useNavigate();
 
@@ -26,6 +26,11 @@ const Navbar = () => {
   const onClickModal = useCallback(() => {
     setModalstate((pre) => !pre);
   }, []);
+
+  const goToLogin = useCallback(() => {
+    navigate(`/login`);
+  }, []);
+
   return (
     <>
       <Container>
@@ -50,7 +55,7 @@ const Navbar = () => {
                 <UserCart></UserCart>
               </UserProfileWrapper>
             ) : (
-              <LoginButton>LOGIN</LoginButton>
+              <LoginButton onClick={goToLogin}>LOGIN</LoginButton>
             )}
           </RegisterContainer>
         </Wrapper>
@@ -100,6 +105,7 @@ const LoginButton = styled.button`
   height: 40px;
   border-radius: 10px;
   font-size: 15px;
+  cursor: pointer;
 `;
 const UserProfile = styled.button`
   border: 0;

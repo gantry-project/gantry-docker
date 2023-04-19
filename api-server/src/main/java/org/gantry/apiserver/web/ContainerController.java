@@ -85,7 +85,11 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @GetMapping("/{containerId}/log")
-    public ContainerLogResponse log(@PathVariable String containerId) throws InterruptedException {
-        return ContainerLogResponse.from(service.log(containerId));
+    public ContainerLogResponse log(@PathVariable String containerId) {
+        String log = service.log(containerId);
+        return ContainerLogResponse.builder()
+                .id(containerId)
+                .log(log)
+                .build();
     }
 }

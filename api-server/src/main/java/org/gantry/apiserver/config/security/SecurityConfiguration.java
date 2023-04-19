@@ -1,6 +1,8 @@
 package org.gantry.apiserver.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.gantry.apiserver.web.dto.ErrorResponse;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,20 +23,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.OutputStream;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
 @Profile("!simple-security")
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
@@ -71,8 +70,9 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
         return (request, response, exception) -> {
-            exception.printStackTrace();
+            log.info(exception.getMessage());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             OutputStream responseStream = response.getOutputStream();
             objectMapper.writeValue(responseStream, ErrorResponse.builder()
@@ -88,8 +88,9 @@ public class SecurityConfiguration {
     @Bean
     public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
         return (request, response, exception) -> {
-            exception.printStackTrace();
+            log.info(exception.getMessage());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
             OutputStream responseStream = response.getOutputStream();
             objectMapper.writeValue(responseStream, ErrorResponse.builder()
@@ -105,7 +106,13 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/health", "/ws/**")
+                .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/health",
+                        "/error",
+                        "/ws/**")
                 .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -129,7 +136,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                 .requestMatchers("/api/v1/users/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/applications").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/applications/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/applications/**").permitAll()
                 .requestMatchers("/api/v1/platforms").hasAnyRole("ADMIN")
                 .requestMatchers("/api/v1/platforms/**").hasAnyRole("ADMIN")
                 .requestMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER")
@@ -138,10 +145,10 @@ public class SecurityConfiguration {
                 .requestMatchers("/health").permitAll()
                 .anyRequest().authenticated()
                 .and()
-//            .exceptionHandling()
-//                .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
-//                .accessDeniedHandler(accessDeniedHandler(objectMapper))
-//                .and()
+            .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
+                .accessDeniedHandler(accessDeniedHandler(objectMapper))
+                .and()
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
