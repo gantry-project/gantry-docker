@@ -24,6 +24,10 @@ public class Container extends  BaseTimeEntity {
     @Transient
     private String log;
 
+    @ManyToOne
+    @JoinColumn(name = "network_id")
+    private DockerNetwork network;
+
     public Container(String id, Application application) {
         this.id = id;
         this.application = application;
