@@ -12,6 +12,7 @@ RUN bin/build-api-server.sh
 RUN bin/test-api-server.sh
 RUN bin/deploy-api-server.sh
 
+RUN echo "REACT_APP_GANTRY_API_SERVER_HOST=http://api-server:8080" >> /gantry-docker/front/.env
 RUN bin/build-front.sh
 RUN bin/test-front.sh
 RUN bin/deploy-front.sh
