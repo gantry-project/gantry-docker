@@ -9,7 +9,7 @@ User-friendly web-based container service management platform
 ### 2) Running the applications using Docker
 ```bash
 $ docker run -d -p 8080:8080 --name api-server ghcr.io/gantry-project/gantry-docker:release api-server
-$ docker run -d -p 3000:3000 --name front ghcr.io/gantry-project/gantry-docker:release front
+$ docker run -d -p 3000:3000 --name front --env REACT_APP_GANTRY_API_SERVER_HOST=http://api-server:8080 ghcr.io/gantry-project/gantry-docker:release front
 ```
 
 ### 2) Build and run applications in local

@@ -26,6 +26,7 @@ RUN curl -SL https://nodejs.org/dist/v18.15.0/node-v18.15.0-linux-x64.tar.gz | t
      cd node/bin && \
      node npm install -g serve
 
+COPY --from=builder /gantry-docker/front /gantry-docker/front
 COPY --from=builder /gantry-docker/build /gantry-docker/build
 COPY --from=builder /gantry-docker/bin /gantry-docker/bin
 
