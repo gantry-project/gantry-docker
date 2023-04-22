@@ -7,6 +7,9 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
+FRONT_HOME=${FRONT_HOME:-"$(cd "$(dirname "$0")"/../front || exit; pwd)"}
+
+
 change_directory() {
   SCRIPT_HOME=${SCRIPT_HOME:-"$(cd "$(dirname "$0")"; pwd)"}
   cd "${SCRIPT_HOME}" || exit
@@ -15,6 +18,9 @@ change_directory() {
 if [[ "$1" == "front" ]]; then
   echo Starting front;
   change_directory;
+  env | grep REACT_APP_ >> "${FRONT_HOME}"/.env
+  ./build-front.sh
+  ./deploy-front.sh
   exec ./run-front.sh
 elif [[ "$1" == "api-server" ]]; then
   echo Startnig api-server;
