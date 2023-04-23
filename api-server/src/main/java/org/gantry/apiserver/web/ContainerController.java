@@ -27,6 +27,7 @@ public class ContainerController {
     @GetMapping
     public List<ContainerResponse> list() {
         return service.findAll().stream()
+                .map(c -> service.findById(c.getId()))
                 .map(ContainerResponse::from)
                 .toList();
     }

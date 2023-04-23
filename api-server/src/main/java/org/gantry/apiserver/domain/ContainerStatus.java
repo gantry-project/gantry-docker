@@ -16,7 +16,8 @@ public enum ContainerStatus {
     PAUSED("PAUSED"),
     EXITED("EXITED"),
     DEAD("DEAD"),
-    UNKNOWN("UNKNOWN");
+    UNKNOWN("UNKNOWN"),
+    NOTFOUND("NOTFOUND");
 
     private final String title;
 
