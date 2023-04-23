@@ -11,8 +11,12 @@ User-friendly web-based container service management platform
 $ docker run -d -p 8080:8080 --name api-server ghcr.io/gantry-project/gantry-docker:release api-server
 $ docker run -d -p 3000:3000 --name front ghcr.io/gantry-project/gantry-docker:release front
 ```
+#### - To set the API-SERVER url
+```bash
+$ docker run -d -p 3000:3000 --name front --env REACT_APP_GANTRY_API_SERVER_HOST=http://api-server:8080 ghcr.io/gantry-project/gantry-docker:release front
+```
 
-#### If you want to add custom environments for the front
+#### - To add custom environments for the front
 ```bash
 # Create env.js file
 $ cat << EOF > env.js
