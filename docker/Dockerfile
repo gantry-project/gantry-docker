@@ -12,7 +12,6 @@ RUN bin/build-api-server.sh
 RUN bin/test-api-server.sh
 RUN bin/deploy-api-server.sh
 
-RUN echo "REACT_APP_GANTRY_API_SERVER_HOST=http://api-server:8080" >> /gantry-docker/front/.env
 RUN bin/build-front.sh
 RUN bin/test-front.sh
 RUN bin/deploy-front.sh
@@ -27,7 +26,6 @@ RUN curl -SL https://nodejs.org/dist/v18.15.0/node-v18.15.0-linux-x64.tar.gz | t
      cd node/bin && \
      node npm install -g serve
 
-COPY --from=builder /gantry-docker/front /gantry-docker/front
 COPY --from=builder /gantry-docker/build /gantry-docker/build
 COPY --from=builder /gantry-docker/bin /gantry-docker/bin
 

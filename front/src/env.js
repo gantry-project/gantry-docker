@@ -1,1 +1,1 @@
-export const env = { ...process.env, ...globalThis['env'] }
+export const env = { ...process.env, ...window['env'] }
