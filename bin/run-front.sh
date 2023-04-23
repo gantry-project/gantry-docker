@@ -10,7 +10,7 @@ if [[ -z ${TARGET_WEBAPP_DIR} ]]; then
   exit 1;
 fi
 
-sed -i 's|\"REACT_APP_GANTRY_API_SERVER_HOST\"\s*:.*|\"REACT_APP_GANTRY_API_SERVER_HOST\":\"https://api-server:9090\"|g'
+[[ -z $REACT_APP_GANTRY_API_SERVER_HOST ]] || sed -ci "s|\"REACT_APP_GANTRY_API_SERVER_HOST\"\s*:.*|\"REACT_APP_GANTRY_API_SERVER_HOST\":\"${REACT_APP_GANTRY_API_SERVER_HOST}\"|g" "$TARGET_WEBAPP_DIR}"/env.js
 
 exec serve -s "${TARGET_WEBAPP_DIR}"
 
