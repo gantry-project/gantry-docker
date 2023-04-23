@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -124,11 +125,14 @@ public class DockerClientConnect {
     public Container getStatus(String containerId) {
         Container findContainer = containerRepository.findById(containerId).orElseThrow(NotFoundException::new);
         List<com.github.dockerjava.api.model.Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
-        com.github.dockerjava.api.model.Container dockerContainer = containers.stream()
-                .filter(container -> container.getId().equals(containerId))
-                .findFirst().orElseThrow();
 
-        findContainer.setStatus(of(dockerContainer.getState()));
+        ContainerStatus status = containers.stream()
+                .filter(container -> container.getId().equals(containerId))
+                .findFirst()
+                .map(c -> ContainerStatus.of(c.getState()))
+                .orElse(ContainerStatus.NOTFOUND);
+
+        findContainer.setStatus(status);
         return findContainer;
     }
 

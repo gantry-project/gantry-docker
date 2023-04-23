@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-//compoents
 import ContainerCard from "../components/UseContainer/ContainerCard";
 
 const UserContainer = () => {
