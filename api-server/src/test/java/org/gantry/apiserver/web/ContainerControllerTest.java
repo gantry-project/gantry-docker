@@ -94,7 +94,7 @@ class ContainerControllerTest {
     @WithMockUser
     @Test
     void getStatus() throws Exception {
-        given(service.findById(anyString())).willReturn(testContainer);
+        given(service.findById("testid0001")).willReturn(testContainer);
 
         mockMvc.perform(get("/api/v1/containers/testid0001"))
                 .andExpect(status().isOk())
@@ -107,6 +107,7 @@ class ContainerControllerTest {
     @Test
     void list() throws Exception {
         given(service.findAll()).willReturn(List.of(testContainer, testContainer));
+        given(service.findById("testid0001")).willReturn(testContainer);
 
         mockMvc.perform(get("/api/v1/containers"))
                 .andExpect(status().isOk())
