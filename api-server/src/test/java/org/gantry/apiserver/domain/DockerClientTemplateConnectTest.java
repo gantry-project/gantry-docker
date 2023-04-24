@@ -58,15 +58,16 @@ class DockerClientTemplateConnectTest {
         testApplication = Application.builder()
                 .image("docker/getting-started")
                 .title("hello_docker")
-                .container(testContainer)
                 .build();
 
         testContainer.setApplication(testApplication);
+        testApplication.setContainer(testContainer);
     }
 
     @BeforeEach
     void saveApplication(){
         testApplication = applicationRepository.save(testApplication);
+        containerRepository.save(testContainer);
         applicationId = testApplication.getId();
 
         DockerClientFactory factory = mock(DockerClientFactory.class);
@@ -94,15 +95,15 @@ class DockerClientTemplateConnectTest {
 
     @Test
     void stop() {
-        PauseContainerCmd pauseCmd = mock(PauseContainerCmd.class);
-        given(client.pauseContainerCmd(anyString())).willReturn(pauseCmd);
+        StopContainerCmd stopCmd = mock(StopContainerCmd.class);
+        given(client.stopContainerCmd(anyString())).willReturn(stopCmd);
 
         Application runApp = applicationRepository.findById(applicationId).get();
         String containerId = runApp.getContainer().getId();
         dockerClientConnect.stop(containerId);
 
         assertThat(containerId).isEqualTo("fx_ctn_test0001");
-        verify(pauseCmd, times(1)).exec();
+        verify(stopCmd, times(1)).exec();
     }
 
     @Test
@@ -121,7 +122,7 @@ class DockerClientTemplateConnectTest {
 
     @Test
     void remove() {
-        given(client.stopContainerCmd(anyString())).willReturn(mock(StopContainerCmd.class));
+        given(client.removeContainerCmd(anyString())).willReturn(mock(RemoveContainerCmd.class));
 
         Application restartApp = applicationRepository.findById(applicationId).get();
         String containerId = restartApp.getContainer().getId();

@@ -74,7 +74,7 @@ public class ContainerController {
             @ApiResponse(responseCode = "404", description = "Not Found the container"),
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
-    @PostMapping("/{containerId}/remove")
+    @DeleteMapping("/{containerId}/remove")
     public ContainerResponse remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
         return ContainerResponse.from(container);

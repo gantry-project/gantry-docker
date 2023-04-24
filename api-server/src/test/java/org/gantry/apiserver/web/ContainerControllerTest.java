@@ -20,8 +20,7 @@ import static org.gantry.apiserver.domain.ContainerStatus.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -82,9 +81,9 @@ class ContainerControllerTest {
     @Test
     void remove() throws Exception {
         testContainer.setStatus(REMOVING);
-        given(service.remove(anyString())).willReturn(testContainer);
+        given(service.remove("testid0001")).willReturn(testContainer);
 
-        mockMvc.perform(post("/api/v1/containers/testid0001/remove").with(csrf()))
+        mockMvc.perform(delete("/api/v1/containers/testid0001/remove").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("id").value("testid0001"))

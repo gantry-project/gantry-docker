@@ -7,6 +7,7 @@ import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import jakarta.ws.rs.NotFoundException;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.gantry.apiserver.domain.*;
 import org.gantry.apiserver.exception.NoSuchContainerException;
 import org.gantry.apiserver.exception.NoSuchPlatformException;
@@ -20,10 +21,11 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static org.gantry.apiserver.domain.ContainerStatus.NOTFOUND;
 import static org.gantry.apiserver.domain.ContainerStatus.of;
 
 
-
+@Slf4j
 @Component
 public class DockerClientConnect {
 
@@ -97,7 +99,7 @@ public class DockerClientConnect {
     @Transactional
     public void stop(String containerId) {
         Container container = findContainerId(containerId);
-        dockerClient.pauseContainerCmd(container.getId()).exec();
+        dockerClient.stopContainerCmd(container.getId()).exec();
     }
 
     private Container findContainerId(String containerId) {
@@ -110,10 +112,12 @@ public class DockerClientConnect {
 
     @Transactional
     public void remove(String containerId) {
-        Container container = findContainerId(containerId);
-        dockerClient.stopContainerCmd(container.getId()).exec();
-        containerRepository.delete(container);
-
+        try {
+            dockerClient.removeContainerCmd(containerId).exec();
+        } catch (com.github.dockerjava.api.exception.NotFoundException e) {
+            log.info(e.getMessage());
+        }
+        containerRepository.deleteById(containerId);
     }
     @Transactional
     public String restart(String containerId) {
