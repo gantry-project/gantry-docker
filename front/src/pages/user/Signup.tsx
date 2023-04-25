@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import userApi from "../../api/user";
-import { UserProps } from "../../types/userType";
+import { UserProps } from "../../types/UserType";
 
 // export interface UserProps {
 //   username: string;

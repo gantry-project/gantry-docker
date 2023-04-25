@@ -9,15 +9,15 @@ import org.gantry.apiserver.domain.Application;
 @Getter
 @ToString
 public class ApplicationResponse {
+    private long id;
     private String title;
     private String image;
-    private String containerId;
 
     public static ApplicationResponse from(Application entity) {
         return ApplicationResponse.builder()
+                .id(entity.getId())
                 .title(entity.getTitle())
                 .image(entity.getImage())
-                .containerId(entity.getContainer().getId())
                 .build();
     }
 }

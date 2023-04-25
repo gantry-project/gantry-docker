@@ -27,6 +27,7 @@ public class ContainerController {
     @GetMapping
     public List<ContainerResponse> list() {
         return service.findAll().stream()
+                .map(c -> service.findById(c.getId()))
                 .map(ContainerResponse::from)
                 .toList();
     }
@@ -73,7 +74,7 @@ public class ContainerController {
             @ApiResponse(responseCode = "404", description = "Not Found the container"),
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
-    @PostMapping("/{containerId}/remove")
+    @DeleteMapping("/{containerId}/remove")
     public ContainerResponse remove(@PathVariable String containerId) {
         Container container = service.remove(containerId);
         return ContainerResponse.from(container);
@@ -85,7 +86,11 @@ public class ContainerController {
             @ApiResponse(responseCode = "500", description = "Server Error or Connection Error with Docker"),
     })
     @GetMapping("/{containerId}/log")
-    public ContainerLogResponse log(@PathVariable String containerId) throws InterruptedException {
-        return ContainerLogResponse.from(service.log(containerId));
+    public ContainerLogResponse log(@PathVariable String containerId) {
+        String log = service.log(containerId);
+        return ContainerLogResponse.builder()
+                .id(containerId)
+                .log(log)
+                .build();
     }
 }

@@ -1,18 +1,20 @@
-import React, { useCallback, useState } from "react";
+import React, {useCallback, useState} from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 //style
 import Badge from "@mui/material/Badge";
-import { FaCartPlus } from "react-icons/fa";
 
-//compoents
 import Modal from "./Modal";
+import {useAuthUser} from "../api/user";
+import {MdManageAccounts} from "react-icons/md";
+import {Authority} from "../types/UserType";
+import {FaUser} from "react-icons/fa";
 
 const Navbar = () => {
-  const [loginstate, setLoginState] = useState(true);
-  const [modalstate, setModalstate] = useState(false);
+  const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
+  const authUser = useAuthUser();
 
   const onClickHandlerHome = useCallback(() => {
     navigate(`/`);
@@ -24,38 +26,37 @@ const Navbar = () => {
   // logo 부분에 사이드바 클릭 버튼
 
   const onClickModal = useCallback(() => {
-    setModalstate((pre) => !pre);
+    setModalState((pre) => !pre);
   }, []);
+
+  const goToLoginPage = useCallback(() => {
+    navigate(`/login`);
+  }, []);
+
+
   return (
     <>
       <Container>
         <Wrapper>
           <Logo onClick={onClickHandlerHome}>GANTRY-DOCKER</Logo>
-          <MainItem>
-            <Item>WHY GRANTRY</Item>
-            <Item>PRODUCTS</Item>
-            <Item>DOCS</Item>
-            <Item>LEARN </Item>
-            <Item>COMMUNITY </Item>
-          </MainItem>
           <RegisterContainer>
-            {loginstate ? (
+            {authUser ? (
               <UserProfileWrapper>
                 <UserProfile onClick={onClickModal}>프로필</UserProfile>
                 <Badge badgeContent={4} color="primary">
-                  <UserCart onClick={onClickHandlerCart}>
-                    <FaCartPlus />
-                  </UserCart>
+                  <UserIcon onClick={onClickHandlerCart}>
+                    {authUser.authority == Authority.ADMIN? <MdManageAccounts /> : <FaUser/>}
+                  </UserIcon>
                 </Badge>
-                <UserCart></UserCart>
+                <UserIcon></UserIcon>
               </UserProfileWrapper>
             ) : (
-              <LoginButton>LOGIN</LoginButton>
+              <LoginButton onClick={goToLoginPage}>LOGIN</LoginButton>
             )}
           </RegisterContainer>
         </Wrapper>
       </Container>
-      {modalstate ? <Modal /> : null}
+      {modalState ? <Modal setModalState={setModalState} /> : null}
     </>
   );
 };
@@ -75,9 +76,11 @@ const Wrapper = styled.div`
   background-color: aquamarine;
   text-align: center;
   align-items: center;
+  justify-content: space-between
 `;
 const Logo = styled.div`
-  width: 25%;
+  width: 150px;
+  margin: 0px 16px;
   cursor: pointer;
 `;
 
@@ -90,7 +93,7 @@ const Item = styled.div`
   margin: 10px;
 `;
 const RegisterContainer = styled.div`
-  width: 20%;
+  width: 150px;
   display: flex;
   justify-content: center;
 `;
@@ -100,6 +103,7 @@ const LoginButton = styled.button`
   height: 40px;
   border-radius: 10px;
   font-size: 15px;
+  cursor: pointer;
 `;
 const UserProfile = styled.button`
   border: 0;
@@ -115,7 +119,7 @@ const UserProfileWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const UserCart = styled.div`
+const UserIcon = styled.div`
   margin: 10px;
   cursor: pointer;
 `;

@@ -24,7 +24,7 @@ public class SecurityConfigurationIntegrationTest {
             setContentType(MediaType.APPLICATION_JSON);
         }};
         String body = new JSONObject() {{
-            put("user", "user");
+            put("username", "user");
             put("password", "user");
         }}.toString();
         HttpEntity<String> request = new HttpEntity<>(body, headers);

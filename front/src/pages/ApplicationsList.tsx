@@ -1,10 +1,8 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-//component
-import ApplicationListHeader from "../components/ApplicationList/ApplicationListHeader";
-import ApplicationCat from "../components/ApplicationList/ApplicationCat";
-import { dummyData } from "../dummyData";
+import ApplicationListHeader from "components/ApplicationList/ApplicationListHeader";
+import ApplicationCat from "components/ApplicationList/ApplicationCat";
 
 const ApplicationsList = () => {
   return (

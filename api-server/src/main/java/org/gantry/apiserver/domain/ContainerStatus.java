@@ -16,15 +16,16 @@ public enum ContainerStatus {
     PAUSED("PAUSED"),
     EXITED("EXITED"),
     DEAD("DEAD"),
-    UNKNOWN("UNKNOWN");
+    UNKNOWN("UNKNOWN"),
+    NOTFOUND("NOTFOUND");
 
     private final String title;
 
     public static ContainerStatus of(String status){
         return Arrays.stream(ContainerStatus.values())
-                .filter(s -> s.getTitle().equals(status))
+                .filter(s -> s.getTitle().equals(status.toUpperCase()))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(UNKNOWN);
     }
 
 }

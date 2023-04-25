@@ -1,22 +1,63 @@
-import React from "react";
+import React, {useCallback, useState} from "react";
 import styled from "@emotion/styled";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import config from "config/config";
+import {useNavigate} from "react-router-dom";
+import {UserPrincipal} from "types/UserType";
+import {ErrorResponse} from "types/Error";
+import {useAuthUserMutation} from "../api/user";
+
 
 const UserLogin = () => {
+  const navigate = useNavigate();
+  const {login} = useAuthUserMutation();
 
-    return (
-        <Form>
-            <Label>이메일</Label>
-            <br />
-            <Input type="text" placeholder="example@naver.com" />
-            <br />
-            <Label>비밀번호</Label>
-            <br />
-            <PasswordInput type="password" placeholder="비밀번호를 입력해주세요." />
-            <br />
-            <JoinButton>회원가입</JoinButton>
-            <LoginButton type="submit">로그인</LoginButton>
-        </Form>
-    );
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const url = `${config.gantryApiServerHost}/auth/token`;
+    const user = {
+      username: username,
+      password: password,
+    };
+
+    axios.post(url, user)
+      .then((res: AxiosResponse<UserPrincipal>) => {
+        const userPrincipal = res.data;
+        console.log("userPrincipal", userPrincipal);
+        login(userPrincipal);
+        navigate("/");
+      })
+      .catch((err: AxiosError<ErrorResponse>)  => {
+        alert(err.response?.data.message)
+      });
+
+  }
+
+  const goToSignUpPage = useCallback(() => {
+    navigate("/signup");
+  }, []);
+
+
+  return (
+    <>
+      <Form onSubmit={submit}>
+        <Label>사용자명</Label>
+        <br/>
+        <Input id="username" type="text" placeholder="username" value={username} onChange={e => setUsername(e.target.value)}/>
+        <br/>
+        <Label>비밀번호</Label>
+        <br/>
+        <PasswordInput id="password" type="password" placeholder="비밀번호를 입력해주세요." value={password}
+                       onChange={e => setPassword(e.target.value)}/>
+        <br/>
+        <LoginButton>로그인</LoginButton>
+        <JoinButton onClick={goToSignUpPage}>회원가입</JoinButton>
+      </Form>
+    </>
+  );
 };
 
 

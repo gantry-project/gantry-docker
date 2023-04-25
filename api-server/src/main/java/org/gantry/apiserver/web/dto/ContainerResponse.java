@@ -15,9 +15,10 @@ public class ContainerResponse {
     private ContainerStatus status;
 
     public static ContainerResponse from(Container container) {
+        long appId = container.getApplication() == null ? 0l : container.getApplication().getId();
         return ContainerResponse.builder()
                 .id(container.getId())
-                .applicationId(container.getApplication().getId())
+                .applicationId(appId)
                 .status(container.getStatus())
                 .build();
     }
