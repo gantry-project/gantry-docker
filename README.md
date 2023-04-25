@@ -27,6 +27,15 @@ EOF
 # Run the front with a volume
 $ docker run -d -p 3000:3000 --name front -v env.js:/gantry-docker/build/front/env.js ghcr.io/gantry-project/gantry-docker:release front
 ```
+#### - To add custom properties for the api-server
+```bash
+# Create application.properties file
+$ cat << EOF > application.properties
+server.port=8080
+EOF
+# Run the api-server with a volume
+$ docker run -d -p 8080:8080 --name api-server -v application.properties:/gantry-docker/build/application.properties ghcr.io/gantry-project/gantry-docker:release api-server
+```
 
 ### 2) Build and run applications in local
 ```bash
