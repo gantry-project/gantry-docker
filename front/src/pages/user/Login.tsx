@@ -5,10 +5,10 @@ import config from "config/config";
 import {useNavigate} from "react-router-dom";
 import {UserPrincipal} from "types/UserType";
 import {ErrorResponse} from "types/Error";
-import {useAuthUserMutation} from "../api/user";
+import {useAuthUserMutation} from "../../api/user";
 
 
-const UserLogin = () => {
+const Login = () => {
   const navigate = useNavigate();
   const {login} = useAuthUserMutation();
 
@@ -103,4 +103,4 @@ const LoginButton = styled.button`
   padding: 10px 20px;
 `;
 
-export default UserLogin;
+export default Login;

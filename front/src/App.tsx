@@ -13,9 +13,8 @@ import UserContainer from "./pages/UserContainer";
 import UserCart from "./pages/UserCart";
 import UserProfile from "./pages/User";
 
-import LogIn from "./pages/LogIn";
-
-import Signup from "./pages/Signup/Signup";
+import Signup from "./pages/user/Signup";
+import Login from "./pages/user/Login";
 
 const queryClient = new QueryClient();
 
@@ -26,12 +25,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/applicationsList" element={<ApplicationsList />} />
           <Route path="/applicationDetail/:applicationId" element={<ApplicationDetail />}/>
           <Route path="/user" element={<UserProfile />}></Route>
           <Route path="/user/container" element={<UserContainer />} />
           <Route path="/userAppCart" element={<UserCart />} />
-          <Route path="/login" element={<LogIn />} />
         </Routes>
       </Layout>
       <ReactQueryDevtools />
