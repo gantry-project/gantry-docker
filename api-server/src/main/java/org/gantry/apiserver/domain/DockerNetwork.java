@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.gantry.apiserver.web.dto.NetworkResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,4 +66,5 @@ public class DockerNetwork {
     public void remove(DockerClient dockerClient){
         dockerClient.removeNetworkCmd(this.id);
     }
+
 }
