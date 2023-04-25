@@ -1,15 +1,14 @@
 import React from "react";
 import styled from "@emotion/styled";
 //components
-import UserOrder from "../components/UserProfile/UserOrder";
+import MyContainerList from "../components/UserProfile/MyContainerList";
 
 const User = () => {
   return (
     <UserProfileWrapper>
       <TopWrapper> 위에 </TopWrapper>
       <BottomWrapper>
-        <UserOrder />
-        <UserOrder />
+        <MyContainerList />
       </BottomWrapper>
     </UserProfileWrapper>
   );
