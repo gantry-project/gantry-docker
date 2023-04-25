@@ -1,14 +1,9 @@
 package org.gantry.apiserver.web;
 
 import lombok.RequiredArgsConstructor;
-import org.gantry.apiserver.domain.DockerNetwork;
 import org.gantry.apiserver.service.NetworkService;
 import org.gantry.apiserver.web.dto.NetworkResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +13,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/networks")
 public class NetworkController {
     private final NetworkService service;
-
+    @GetMapping()
     public List<NetworkResponse> list() {
         return service.findAll()
                 .stream()
@@ -31,10 +26,22 @@ public class NetworkController {
         return NetworkResponse.from(service.findById(networkId).orElseThrow());
     }
 
-    @GetMapping("{networkName}")
+    @PostMapping("{networkName}/create")
     public String create(@PathVariable String networkName) {
         return service.create(networkName);
     }
 
+    @PostMapping("{networkId}/run")
+    public List<String> run(@PathVariable String networkId) {
+        return service.run(networkId);
+    }
+    @PostMapping("{networkId}/stop")
+    public void stop(@PathVariable String networkId){
+        service.stop(networkId);
+    }
 
+    @PostMapping("{networkId}/remove")
+    public void remove(@PathVariable String networkId){
+        service.remove(networkId);
+    }
 }
