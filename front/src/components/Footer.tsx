@@ -70,4 +70,6 @@ const ItemWrapper = styled.div`
 const ItemLi = styled.li`
   display: inline-block;
   margin: 10px;
+  text-align: center;
+  line-height: 1.2;
 `;
