@@ -17,7 +17,7 @@ public class Application extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "application", orphanRemoval = true)
     private Container container;
 
     @Column(nullable = false)

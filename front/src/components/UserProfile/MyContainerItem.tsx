@@ -3,69 +3,49 @@ import styled from "@emotion/styled";
 import {getAuthUser} from "../../api/user";
 import axios from "axios";
 import config from "../../config/config";
-import {useNavigate} from "react-router-dom";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {QueryClient, useMutation, useQueryClient} from "@tanstack/react-query";
+import {Method} from "axios/index";
 
 interface Props {
   id: string;
   status: string;
 }
 
+const getContainerMutation = (queryClient: QueryClient) => (id: string) => (method: Method, command: string) => useMutation(
+  async () => {
+    const headers: any = {};
+    const token = getAuthUser()?.accessToken;
+    if (token) {
+      headers["Authorization"] = "Bearer " + token;
+    }
+    console.log("headers", headers);
+    axios(`${config.gantryApiUrl}/containers/${id}/${command}`,{
+      method: method,
+      headers: {...headers}
+    }).then(res => {
+      return res;
+    }).catch(err => {
+      console.warn(err);
+      alert(err.response.data.detail);
+      return;
+    });
+  },
+  {
+    onSuccess: data => queryClient.invalidateQueries(["getMyContainers"])
+  }
+);
+
 const MyContainerItem = ({id, status}: Props) => {
   const queryClient = useQueryClient();
+  const containerMutation = getContainerMutation(queryClient)(id);
 
+  const {mutate: restartContainer} = containerMutation("POST", "restart");
+  const {mutate: stopContainer} = containerMutation("POST", "stop");
+  const {mutate: removeContainer} = containerMutation("DELETE", "remove");
 
-  const {mutate: restartContainer} = useMutation(
-    async () => {
-      const headers: any = {};
-      const token = getAuthUser()?.accessToken;
-      if (token) {
-        headers["Authorization"] = "Bearer " + token;
-      }
-      console.log("headers", headers);
-      axios.post(
-        `${config.gantryApiUrl}/containers/${id}/restart`,
-        null,
-        {headers: {...headers}}
-      ).then(res => {
-        return res;
-      }).catch(err => {
-        console.warn(err);
-        alert(err.response.data.detail);
-        return;
-      });
-    },
-    {
-      onSuccess: data => queryClient.invalidateQueries(["getMyContainers"])
-    }
-  );
-
-
-  const {mutate: stopContainer} = useMutation(
-    async () => {
-      const headers: any = {};
-      const token = getAuthUser()?.accessToken;
-      if (token) {
-        headers["Authorization"] = "Bearer " + token;
-      }
-      console.log("headers", headers);
-      axios.post(
-        `${config.gantryApiUrl}/containers/${id}/stop`,
-        null,
-        {headers: {...headers}}
-      ).then(res => {
-        return res;
-      }).catch(err => {
-        console.warn(err);
-        alert(err.response.data.detail);
-        return;
-      });
-    },
-    {
-      onSuccess: data => queryClient.invalidateQueries(["getMyContainers"])
-    }
-  );
-
+  const canRestart: boolean = ["RUNNING", "PAUSED", "EXITED", "DEAD"].includes(status);
+  const canStop: boolean = ["RUNNING"].includes(status);
+  const canRemove: boolean = ["CREATED", "RESTARTING", "RUNNING", "PAUSED", "EXITED", "DEAD", "NOTFOUND"].includes(status);
 
   return (
     <Container>
@@ -74,9 +54,9 @@ const MyContainerItem = ({id, status}: Props) => {
           <Title> {id} : {status} </Title>
         </TopLeftWrapper>
         <TopRightWrapper>
-          <Button onClick={() => restartContainer()}>재실행</Button>
-          <Button onClick={() => stopContainer()}>종료</Button>
-          <Button>수정</Button>
+          <Button disabled={!canRestart} onClick={() => restartContainer()}>재실행</Button>
+          <Button disabled={!canStop} onClick={() => stopContainer()}>종료</Button>
+          <Button disabled={!canRemove} onClick={() => removeContainer()}>삭제</Button>
         </TopRightWrapper>
       </TopItem>
       <BottomItem>기술 스택: springboot, mongodb ...</BottomItem>

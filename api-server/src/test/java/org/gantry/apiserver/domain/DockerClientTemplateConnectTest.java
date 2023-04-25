@@ -49,8 +49,8 @@ class DockerClientTemplateConnectTest {
 
     private static long applicationId;
 
-    @BeforeAll
-    static void createFixture() {
+    @BeforeEach
+    void saveApplication(){
         testContainer = Container.builder()
                 .id("fx_ctn_test0001")
                 .status(RUNNING)
@@ -61,13 +61,11 @@ class DockerClientTemplateConnectTest {
                 .container(testContainer)
                 .build();
 
-        testContainer.setApplication(testApplication);
-    }
-
-    @BeforeEach
-    void saveApplication(){
         testApplication = applicationRepository.save(testApplication);
         applicationId = testApplication.getId();
+
+        testContainer.setApplication(testApplication);
+        testContainer = containerRepository.save(testContainer);
 
         DockerClientFactory factory = mock(DockerClientFactory.class);
         given(factory.getInstance()).willReturn(client);
@@ -94,15 +92,15 @@ class DockerClientTemplateConnectTest {
 
     @Test
     void stop() {
-        PauseContainerCmd pauseCmd = mock(PauseContainerCmd.class);
-        given(client.pauseContainerCmd(anyString())).willReturn(pauseCmd);
+        StopContainerCmd stopCmd = mock(StopContainerCmd.class);
+        given(client.stopContainerCmd(anyString())).willReturn(stopCmd);
 
         Application runApp = applicationRepository.findById(applicationId).get();
         String containerId = runApp.getContainer().getId();
         dockerClientConnect.stop(containerId);
 
         assertThat(containerId).isEqualTo("fx_ctn_test0001");
-        verify(pauseCmd, times(1)).exec();
+        verify(stopCmd, times(1)).exec();
     }
 
     @Test
@@ -121,7 +119,7 @@ class DockerClientTemplateConnectTest {
 
     @Test
     void remove() {
-        given(client.stopContainerCmd(anyString())).willReturn(mock(StopContainerCmd.class));
+        given(client.removeContainerCmd(anyString())).willReturn(mock(RemoveContainerCmd.class));
 
         Application restartApp = applicationRepository.findById(applicationId).get();
         String containerId = restartApp.getContainer().getId();
