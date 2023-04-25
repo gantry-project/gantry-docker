@@ -17,12 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import static org.gantry.apiserver.domain.ContainerStatus.NOTFOUND;
-import static org.gantry.apiserver.domain.ContainerStatus.of;
 
 
 @Slf4j
