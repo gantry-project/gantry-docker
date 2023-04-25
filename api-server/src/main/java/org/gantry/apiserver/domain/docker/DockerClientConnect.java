@@ -21,10 +21,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static org.gantry.apiserver.domain.ContainerStatus.NOTFOUND;
-import static org.gantry.apiserver.domain.ContainerStatus.of;
-
-
 @Slf4j
 @Component
 public class DockerClientConnect {
