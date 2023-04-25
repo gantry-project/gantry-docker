@@ -1,3 +1,5 @@
+import {env} from 'env';
+
 interface Config {
     nodeEnv: string;
     gantryApiServerHost: string;
@@ -5,11 +7,11 @@ interface Config {
 }
 
 function getGantryApiServerHost() {
-    return process.env.REACT_APP_GANTRY_API_SERVER_HOST || "http://localhost:8080";
+    return env.REACT_APP_GANTRY_API_SERVER_HOST || "http://localhost:8080";
 }
 
 const config: Config = {
-    nodeEnv : process.env.NODE_ENV || "development",
+    nodeEnv : env.NODE_ENV || "development",
     gantryApiServerHost : getGantryApiServerHost(),
     gantryApiUrl : getGantryApiServerHost() + "/api/v1",
 };

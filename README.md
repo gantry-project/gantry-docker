@@ -6,10 +6,26 @@ User-friendly web-based container service management platform
 
 ## Getting started
 
-### 2) Running the applications using Docker
+### 1) Running the applications using Docker
 ```bash
 $ docker run -d -p 8080:8080 --name api-server ghcr.io/gantry-project/gantry-docker:release api-server
 $ docker run -d -p 3000:3000 --name front ghcr.io/gantry-project/gantry-docker:release front
+```
+#### - To set the API-SERVER url
+```bash
+$ docker run -d -p 3000:3000 --name front --env REACT_APP_GANTRY_API_SERVER_HOST=http://api-server:8080 ghcr.io/gantry-project/gantry-docker:release front
+```
+
+#### - To add custom environments for the front
+```bash
+# Create env.js file
+$ cat << EOF > env.js
+window.env = {
+  "REACT_APP_GANTRY_API_SERVER_HOST": "http://public-ip:8080",
+}
+EOF
+# Run the front with a volume
+$ docker run -d -p 3000:3000 --name front -v env.js:/gantry-docker/build/front/env.js ghcr.io/gantry-project/gantry-docker:release front
 ```
 
 ### 2) Build and run applications in local
