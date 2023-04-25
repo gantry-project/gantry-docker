@@ -49,8 +49,8 @@ class DockerClientTemplateConnectTest {
 
     private static long applicationId;
 
-    @BeforeAll
-    static void createFixture() {
+    @BeforeEach
+    void saveApplication(){
         testContainer = Container.builder()
                 .id("fx_ctn_test0001")
                 .status(RUNNING)
@@ -58,17 +58,14 @@ class DockerClientTemplateConnectTest {
         testApplication = Application.builder()
                 .image("docker/getting-started")
                 .title("hello_docker")
+                .container(testContainer)
                 .build();
 
-        testContainer.setApplication(testApplication);
-        testApplication.setContainer(testContainer);
-    }
-
-    @BeforeEach
-    void saveApplication(){
         testApplication = applicationRepository.save(testApplication);
-        containerRepository.save(testContainer);
         applicationId = testApplication.getId();
+
+        testContainer.setApplication(testApplication);
+        testContainer = containerRepository.save(testContainer);
 
         DockerClientFactory factory = mock(DockerClientFactory.class);
         given(factory.getInstance()).willReturn(client);
